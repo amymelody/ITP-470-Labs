@@ -1,6 +1,5 @@
 # ITP 470 Multiplayer #
 
-### PUT YOUR INFO HERE ###
-Name: Sanjay Madhav
+Name: Josh DiGiovanni
 
-Email: madhav@usc.edu
+Email: jmdigiov@usc.edu
