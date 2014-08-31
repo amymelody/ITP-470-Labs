@@ -5,6 +5,8 @@ class TCPSocket
 public:
 	~TCPSocket();
 	friend class TCPSocketUtil;
+	int Listen();
+	int Connect(const sockaddr *name, int namelen);
 
 private:
 	TCPSocket(SOCKET inSocket) : mSocket(inSocket) {};

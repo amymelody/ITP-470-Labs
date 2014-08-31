@@ -11,13 +11,19 @@ int _tmain(int argc, WCHAR* argv[])
 	//to take in any required parameters.
 
 	if (argv[2] == NULL) {
+		wstring wstr = argv[1];
+		string str(wstr.begin(), wstr.end());
+		uint16_t inPort = atoi(str.c_str());
+
 		Server server;
-		uint16_t inPort = static_cast<uint16_t>(*argv[1]);
 		server.Run(inPort);
 	} else {
-		Client client;
+		wstring wstr = argv[1];
+		string str(wstr.begin(), wstr.end());
+		ULONG ipAddress = atol(str.c_str());
 
-		client.Run();
+		Client client;
+		client.Run(ipAddress);
 	}
 
 	return 0;

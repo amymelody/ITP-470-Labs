@@ -1,6 +1,5 @@
 class Client
 {
 public:
-
-	void Run();
+	void Run(ULONG ipAddress);
 };

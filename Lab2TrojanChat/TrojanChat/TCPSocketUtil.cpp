@@ -3,22 +3,24 @@
 TCPSocketPtr TCPSocketUtil::CreateSocket(uint16_t inPort)
 {
 	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (s == INVALID_SOCKET) {
+		return TCPSocketPtr();
+	}
 
 	if (inPort != 0) {
-		sockaddr address;
-		reinterpret_cast<sockaddr_in*>(&address)->sin_family = AF_INET;
-		reinterpret_cast<sockaddr_in*>(&address)->sin_addr.S_un.S_addr = INADDR_ANY;
-		reinterpret_cast<sockaddr_in*>(&address)->sin_port = htons(inPort);
-		int bindResult = bind(s, &address, sizeof(sockaddr));
+		sockaddr_in address;
+		address.sin_family = AF_INET;
+		address.sin_addr.S_un.S_addr = INADDR_ANY;
+		address.sin_port = htons(inPort);
+		
+		int bindResult = bind(s, reinterpret_cast<sockaddr*>(&address), sizeof(sockaddr));
 
 		if (bindResult == SOCKET_ERROR) {
 			return TCPSocketPtr();
 		}
-
-		return TCPSocketPtr(new TCPSocket(s));
 	}
 
-	return TCPSocketPtr();
+	return TCPSocketPtr(new TCPSocket(s));
 }
 
 int TCPSocketUtil::StartUp()
