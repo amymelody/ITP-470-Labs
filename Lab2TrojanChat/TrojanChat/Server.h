@@ -1,6 +1,5 @@
 class Server
 {
 public:
-
-	void Run();
+	void Run(uint16_t inPort);
 };

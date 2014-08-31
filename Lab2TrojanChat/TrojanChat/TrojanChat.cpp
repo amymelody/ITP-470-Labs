@@ -6,25 +6,19 @@
 
 int _tmain(int argc, WCHAR* argv[])
 {
-	
-	//check your arguments to determin if you're a client or a server...
-	//for now, we'll assume you are a client
-	bool isClient = true;
-	
-	if (isClient)
-	{
+	//Fill update main() so that it uses your logic to properly create
+	//a client or server. Feel free to add a constructor to both classes
+	//to take in any required parameters.
+
+	if (argv[2] == NULL) {
+		Server server;
+		uint16_t inPort = static_cast<uint16_t>(*argv[1]);
+		server.Run(inPort);
+	} else {
 		Client client;
 
 		client.Run();
 	}
-	else
-	{
-		Server server;
-
-		server.Run();
-	}
-
-
 
 	return 0;
 }

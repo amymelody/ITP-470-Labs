@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-void Server::Run()
+void Server::Run(uint16_t inPort)
 {
-	//do server things
+	TCPSocketUtil::CreateSocket(inPort);
 }

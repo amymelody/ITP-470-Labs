@@ -7,7 +7,7 @@
 
 
 #define WIN32_LEAN_AND_MEAN 1
-#include <Windows.h>
+#include <windows.h>
 #include <WinSock2.h>
 
 #include <cstdio>
@@ -15,8 +15,14 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+
+using std::shared_ptr;
+using std::wstring;
+using std::string;
+using std::unique_ptr;
+
 #include "WindowsConsole.h"
 #include "Client.h"
 #include "Server.h"
-
-// TODO: reference additional headers your program requires here
+#include "TCPSocket.h"
+#include "TCPSocketUtil.h"
