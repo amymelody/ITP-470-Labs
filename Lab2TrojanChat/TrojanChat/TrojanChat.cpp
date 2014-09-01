@@ -6,25 +6,26 @@
 
 int _tmain(int argc, WCHAR* argv[])
 {
-	//Fill update main() so that it uses your logic to properly create
-	//a client or server. Feel free to add a constructor to both classes
-	//to take in any required parameters.
+	TCPSocketUtil::StartUp();
 
-	if (argv[2] == NULL) {
+	if (argc == 2) {
 		wstring wstr = argv[1];
 		string str(wstr.begin(), wstr.end());
-		uint16_t inPort = atoi(str.c_str());
+		USHORT inPort = atoi(str.c_str());
 
 		Server server;
-		server.Run(inPort);
-	} else {
+		server.Run(htons(inPort));
+	} else if (argc > 2) {
 		wstring wstr = argv[1];
-		string str(wstr.begin(), wstr.end());
-		ULONG ipAddress = atol(str.c_str());
+
+		ULONG ipAddress;
+		InetPton(AF_INET, wstr.c_str(), &ipAddress);
 
 		Client client;
-		client.Run(ipAddress);
+		client.Run(ipAddress, htons(45000));
 	}
+
+	TCPSocketUtil::CleanUp();
 
 	return 0;
 }

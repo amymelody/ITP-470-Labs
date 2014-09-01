@@ -9,12 +9,14 @@
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
 #include <WinSock2.h>
+#include <Ws2tcpip.h>
 
 #include <cstdio>
 #include <tchar.h>
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include <sstream>
 
 using std::shared_ptr;
 using std::wstring;
@@ -22,7 +24,8 @@ using std::string;
 using std::unique_ptr;
 
 #include "WindowsConsole.h"
-#include "Client.h"
 #include "Server.h"
+#include "Client.h"
 #include "TCPSocket.h"
 #include "TCPSocketUtil.h"
+#include "StringUtils.h"

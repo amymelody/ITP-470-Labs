@@ -33,6 +33,9 @@
     <ClInclude Include="TCPSocketUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StringUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TCPSocketUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

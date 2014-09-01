@@ -1,7 +1,7 @@
 class TCPSocketUtil
 {
 public:
-	static TCPSocketPtr CreateSocket(uint16_t inPort);
+	static shared_ptr<TCPSocket> CreateSocket(USHORT inPort);
 	static int StartUp();
 	static void CleanUp();
 	static int GetLastError();
