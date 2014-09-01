@@ -18,42 +18,41 @@ void Client::Run(ULONG ipAddress, USHORT inPort)
 			LOG(L"Error Connecting: %d", GetLastError());
 			return;
 		}
-		
-	}
-
-	char data[64];
-	string dataStr(data);
-	int size = socket->Receive(data, sizeof(data), 0);
-	if (size == SOCKET_ERROR) {
-		LOG(L"Error Receiving: %d", GetLastError());
-	}
-	else {
-		string dataStr(data);
-		dataStr.resize(size);
-		std::wstringstream wData;
-		wData << dataStr.c_str();
-
-		wc->Write(wData.str().c_str());
+		if (socket->SetNonBlocking(true) == SOCKET_ERROR) {
+			LOG(L"Error Setting NonBlocking: %d", GetLastError());
+		}
 	}
 
 	for (;;)
 	{
-		
+		char data[64];
+		string dataStr(data);
+		int size = socket->Receive(data, sizeof(data), 0);
+		if (size == SOCKET_ERROR) {
+			LOG(L"Error Receiving: %d", GetLastError());
+		}
+		else {
+			string dataStr(data);
+			dataStr.resize(size);
+			std::wstringstream wData;
+			wData << dataStr.c_str();
 
-		/*
+			wc->Write(wData.str().c_str());
+		}
+
 		wc->ProcessPendingInput();
-		std::wstring data;
-		if (wc->ReadPendingLine( data ))
+		std::wstring inputData;
+		if (wc->ReadPendingLine( inputData ))
 		{
-
-			//do whatever you want with the data- for instance, this will write it to the console...
-			if (data.size() > 0)
+			if (inputData.size() > 0)
 			{
-
-				WindowsConsole::Instance()->Write( data.c_str() );
+				std::stringstream ss;
+				ss << inputData.c_str();
+				if (socket->Send(ss.str().c_str(), ss.str().length(), 0) == SOCKET_ERROR) {
+					LOG(L"Error Sending: %d", GetLastError());
+				}
 			}
 
-
-		}*/
+		}
 	}
 }

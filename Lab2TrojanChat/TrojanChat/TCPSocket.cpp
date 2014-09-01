@@ -27,3 +27,8 @@ int TCPSocket::Send(const char* buf, int len, int flags) {
 int TCPSocket::Receive(char* buf, int len, int flags) {
 	return recv(mSocket, buf, len, flags);
 }
+
+int TCPSocket::SetNonBlocking(bool inShouldBlock) {
+	ULONG argp = inShouldBlock;
+	return ioctlsocket(mSocket, FIONBIO, &argp);
+}

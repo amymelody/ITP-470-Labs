@@ -10,6 +10,7 @@ public:
 	shared_ptr<TCPSocket> Accept();
 	int Send(const char* buf, int len, int flags);
 	int Receive(char* buf, int len, int flags);
+	int SetNonBlocking(bool inShouldBlock);
 
 private:
 	TCPSocket(SOCKET inSocket) : mSocket(inSocket) {};
