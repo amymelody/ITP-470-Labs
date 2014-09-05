@@ -20,7 +20,6 @@ void Server::Run(USHORT inPort)
 	for (;;)
 	{
 		FD_ZERO(&readSet);
-		FD_ZERO(&writeSet);
 		FD_SET(socket->GetSocket(), &readSet);
 		for each (ClientProxy* clientProxy in clientProxies) {
 			FD_SET(clientProxy->GetTCPSocket()->GetSocket(), &readSet);
@@ -28,14 +27,14 @@ void Server::Run(USHORT inPort)
 
 		int selectResult = TCPSocketUtil::Select(&readSet, NULL, NULL);
 		if (selectResult < 0) {
-			LOG(L"Error Selecting: %d", GetLastError());
+			LOG(L"Error Selecting For Read Access: %d", GetLastError());
 		}
 		if (selectResult > 0) {
 			if (FD_ISSET(socket->GetSocket(), &readSet)) {
 				shared_ptr<TCPSocket> clientSocket = socket->Accept();
 				if (clientSocket) {
 					clientProxies.push_back(new ClientProxy(clientSocket));
-					string msg = "Hello World";
+					string msg = "Hello World\n";
 					if (clientSocket->Send(msg.c_str(), msg.length(), 0) == SOCKET_ERROR) {
 						LOG(L"Error Sending: %d", GetLastError());
 					}
@@ -47,12 +46,33 @@ void Server::Run(USHORT inPort)
 					char data[64];
 					int size = clientProxy->GetTCPSocket()->Receive(data, sizeof(data), 0);
 					if (size != SOCKET_ERROR) {
-						string dataStr(data);
+						FD_ZERO(&writeSet);
+						for each (ClientProxy* clientProxy in clientProxies) {
+							FD_SET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet);
+						}
+						selectResult = TCPSocketUtil::Select(NULL, &writeSet, NULL);
+						if (selectResult < 0) {
+							LOG(L"Error Selecting For Write Access: %d", GetLastError());
+						}
+						if (selectResult > 0) {
+							string dataStr(data);
+							dataStr.resize(size);
+							for each (ClientProxy* clientProxy in clientProxies) {
+								if (FD_ISSET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet)) {
+
+									if (clientProxy->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
+										LOG(L"Error Sending: %d", GetLastError());
+									}
+								}
+							}
+						}
+
+					/*	string dataStr(data);
 						dataStr.resize(size);
 						std::wstringstream wData;
 						wData << dataStr.c_str();
 
-						wc->Write(wData.str().c_str());
+						wc->Write(wData.str().c_str());*/
 					}
 				}
 			}
