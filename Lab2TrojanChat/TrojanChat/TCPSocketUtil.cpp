@@ -40,3 +40,7 @@ int TCPSocketUtil::GetLastError()
 {
 	return WSAGetLastError();
 }
+
+int TCPSocketUtil::Select(fd_set* readfds, fd_set* writefds, fd_set* exceptfds) {
+	return select(0, readfds, writefds, exceptfds, NULL);
+}

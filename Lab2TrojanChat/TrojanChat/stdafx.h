@@ -24,8 +24,9 @@ using std::string;
 using std::unique_ptr;
 
 #include "WindowsConsole.h"
-#include "Server.h"
 #include "Client.h"
 #include "TCPSocket.h"
 #include "TCPSocketUtil.h"
 #include "StringUtils.h"
+#include "ClientProxy.h"
+#include "Server.h"

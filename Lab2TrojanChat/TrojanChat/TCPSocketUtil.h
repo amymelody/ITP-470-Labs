@@ -5,6 +5,6 @@ public:
 	static int StartUp();
 	static void CleanUp();
 	static int GetLastError();
-//	static void ReportError(const wchar_t* inOperationDesc);
+	static int Select(fd_set* readfds, fd_set* writefds, fd_set* exceptfds);
 };
 
