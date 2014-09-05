@@ -32,7 +32,7 @@ int _tmain(int argc, WCHAR* argv[])
 		USHORT inPort = atoi(portStr.c_str());
 
 		Client client;
-		client.Run(ipAddress, htons(inPort));
+		client.Run(ipAddress, htons(inPort), argv[2]);
 	}
 
 	TCPSocketUtil::CleanUp();

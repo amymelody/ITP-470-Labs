@@ -46,22 +46,30 @@ void Server::Run(USHORT inPort)
 					char data[64];
 					int size = clientProxy->GetTCPSocket()->Receive(data, sizeof(data), 0);
 					if (size != SOCKET_ERROR) {
-						FD_ZERO(&writeSet);
-						for each (ClientProxy* clientProxy in clientProxies) {
-							FD_SET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet);
+						if (clientProxy->name.empty()) {
+							string nameStr(data);
+							nameStr.resize(size);
+							clientProxy->name = nameStr;
 						}
-						selectResult = TCPSocketUtil::Select(NULL, &writeSet, NULL);
-						if (selectResult < 0) {
-							LOG(L"Error Selecting For Write Access: %d", GetLastError());
-						}
-						if (selectResult > 0) {
-							string dataStr(data);
-							dataStr.resize(size);
+						else {
+							FD_ZERO(&writeSet);
 							for each (ClientProxy* clientProxy in clientProxies) {
-								if (FD_ISSET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet)) {
+								FD_SET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet);
+							}
+							selectResult = TCPSocketUtil::Select(NULL, &writeSet, NULL);
+							if (selectResult < 0) {
+								LOG(L"Error Selecting For Write Access: %d", GetLastError());
+							}
+							if (selectResult > 0) {
+								string dataStr(data);
+								dataStr.resize(size);
+								dataStr = clientProxy->name + ": " + dataStr;
+								for each (ClientProxy* clientProxy in clientProxies) {
+									if (FD_ISSET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet)) {
 
-									if (clientProxy->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
-										LOG(L"Error Sending: %d", GetLastError());
+										if (clientProxy->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
+											LOG(L"Error Sending: %d", GetLastError());
+										}
 									}
 								}
 							}
