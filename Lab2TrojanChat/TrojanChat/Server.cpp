@@ -34,10 +34,6 @@ void Server::Run(USHORT inPort)
 				shared_ptr<TCPSocket> clientSocket = socket->Accept();
 				if (clientSocket) {
 					clientProxies.push_back(new ClientProxy(clientSocket));
-					string msg = "Hello World\n";
-					if (clientSocket->Send(msg.c_str(), msg.length(), 0) == SOCKET_ERROR) {
-						LOG(L"Error Sending: %d", GetLastError());
-					}
 				}
 			}
 
@@ -53,8 +49,8 @@ void Server::Run(USHORT inPort)
 						}
 						else {
 							FD_ZERO(&writeSet);
-							for each (ClientProxy* clientProxy in clientProxies) {
-								FD_SET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet);
+							for each (ClientProxy* cp in clientProxies) {
+								FD_SET(cp->GetTCPSocket()->GetSocket(), &writeSet);
 							}
 							selectResult = TCPSocketUtil::Select(NULL, &writeSet, NULL);
 							if (selectResult < 0) {
@@ -63,12 +59,36 @@ void Server::Run(USHORT inPort)
 							if (selectResult > 0) {
 								string dataStr(data);
 								dataStr.resize(size);
-								dataStr = clientProxy->name + ": " + dataStr;
-								for each (ClientProxy* clientProxy in clientProxies) {
-									if (FD_ISSET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet)) {
 
-										if (clientProxy->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
-											LOG(L"Error Sending: %d", GetLastError());
+								if (dataStr[0] == '`') {
+									dataStr.erase(0, 1);
+									string nameStr(dataStr);
+									for (int i = 0; i < dataStr.length(); i++) {
+										if (dataStr[i] == ' ') {
+											dataStr.erase(0, i + 1);
+											nameStr.erase(i, dataStr.length()+1);
+											break;
+										}
+									}
+
+									for each (ClientProxy* cp in clientProxies) {
+										if (cp->name == nameStr) {
+											dataStr = clientProxy->name + " (private): " + dataStr;
+											if (FD_ISSET(cp->GetTCPSocket()->GetSocket(), &writeSet)) {
+												if (cp->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
+													LOG(L"Error Sending: %d", GetLastError());
+												}
+											}
+										}
+									}
+								}
+								else {
+									dataStr = clientProxy->name + ": " + dataStr;
+									for each (ClientProxy* clientProxy in clientProxies) {
+										if (FD_ISSET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet)) {
+											if (clientProxy->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
+												LOG(L"Error Sending: %d", GetLastError());
+											}
 										}
 									}
 								}
