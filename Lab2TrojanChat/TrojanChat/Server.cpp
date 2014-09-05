@@ -33,19 +33,24 @@ void Server::Run(USHORT inPort)
 			if (FD_ISSET(socket->GetSocket(), &readSet)) {
 				shared_ptr<TCPSocket> clientSocket = socket->Accept();
 				if (clientSocket) {
-					clientProxies.push_back(new ClientProxy(clientSocket));
+					ClientProxy* cp = new ClientProxy(clientSocket);
+					clientProxies.push_back(cp);
 				}
 			}
 
-			for each (ClientProxy* clientProxy in clientProxies) {
-				if (FD_ISSET(clientProxy->GetTCPSocket()->GetSocket(), &readSet)) {
+			for (int i = clientProxies.size() - 1; i >= 0; i--) {
+				if (FD_ISSET(clientProxies[i]->GetTCPSocket()->GetSocket(), &readSet)) {
 					char data[64];
-					int size = clientProxy->GetTCPSocket()->Receive(data, sizeof(data), 0);
+					int size = clientProxies[i]->GetTCPSocket()->Receive(data, sizeof(data), 0);
+					if (size == SOCKET_ERROR) {
+						LOG(L"Client disconnected: %d", GetLastError());
+						clientProxies.erase(clientProxies.begin() + i);
+					}
 					if (size != SOCKET_ERROR) {
-						if (clientProxy->name.empty()) {
+						if (clientProxies[i]->name.empty()) {
 							string nameStr(data);
 							nameStr.resize(size);
-							clientProxy->name = nameStr;
+							clientProxies[i]->name = nameStr;
 						}
 						else {
 							FD_ZERO(&writeSet);
@@ -60,33 +65,36 @@ void Server::Run(USHORT inPort)
 								string dataStr(data);
 								dataStr.resize(size);
 
+								bool privateMessage = false;
 								if (dataStr[0] == '`') {
-									dataStr.erase(0, 1);
-									string nameStr(dataStr);
-									for (int i = 0; i < dataStr.length(); i++) {
-										if (dataStr[i] == ' ') {
-											dataStr.erase(0, i + 1);
-											nameStr.erase(i, dataStr.length()+1);
+									string msgStr(dataStr);
+									msgStr.erase(0, 1);
+									string nameStr(msgStr);
+									for (int j = 0; j < msgStr.length(); j++) {
+										if (msgStr[j] == ' ') {
+											msgStr.erase(0, j + 1);
+											nameStr.erase(j, msgStr.length() + 1);
 											break;
 										}
 									}
 
 									for each (ClientProxy* cp in clientProxies) {
 										if (cp->name == nameStr) {
-											dataStr = clientProxy->name + " (private): " + dataStr;
+											privateMessage = true;
+											msgStr = clientProxies[i]->name + " (private): " + msgStr;
 											if (FD_ISSET(cp->GetTCPSocket()->GetSocket(), &writeSet)) {
-												if (cp->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
+												if (cp->GetTCPSocket()->Send(msgStr.c_str(), msgStr.length(), 0) == SOCKET_ERROR) {
 													LOG(L"Error Sending: %d", GetLastError());
 												}
 											}
 										}
 									}
 								}
-								else {
-									dataStr = clientProxy->name + ": " + dataStr;
-									for each (ClientProxy* clientProxy in clientProxies) {
-										if (FD_ISSET(clientProxy->GetTCPSocket()->GetSocket(), &writeSet)) {
-											if (clientProxy->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
+								if (!privateMessage) {
+									dataStr = clientProxies[i]->name + ": " + dataStr;
+									for each (ClientProxy* cp in clientProxies) {
+										if (FD_ISSET(cp->GetTCPSocket()->GetSocket(), &writeSet)) {
+											if (cp->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
 												LOG(L"Error Sending: %d", GetLastError());
 											}
 										}
@@ -94,13 +102,6 @@ void Server::Run(USHORT inPort)
 								}
 							}
 						}
-
-					/*	string dataStr(data);
-						dataStr.resize(size);
-						std::wstringstream wData;
-						wData << dataStr.c_str();
-
-						wc->Write(wData.str().c_str());*/
 					}
 				}
 			}
