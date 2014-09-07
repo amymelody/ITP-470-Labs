@@ -8,8 +8,8 @@ public:
 	int Listen();
 	int Connect(ULONG ipAddress, USHORT inPort);
 	shared_ptr<TCPSocket> Accept();
-	int Send(const char* buf, int len, int flags);
-	int Receive(char* buf, int len, int flags);
+	int Send(const char* buf, int len);
+	int Receive(char* buf, int len);
 	int SetNonBlocking(bool inShouldBlock);
 	SOCKET GetSocket();
 

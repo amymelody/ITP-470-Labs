@@ -24,12 +24,12 @@ shared_ptr<TCPSocket> TCPSocket::Accept() {
 	return shared_ptr<TCPSocket>(new TCPSocket(clientSocket));
 }
 
-int TCPSocket::Send(const char* buf, int len, int flags) {
-	return send(mSocket, buf, len, flags);
+int TCPSocket::Send(const char* buf, int len) {
+	return send(mSocket, buf, len, 0);
 }
 
-int TCPSocket::Receive(char* buf, int len, int flags) {
-	return recv(mSocket, buf, len, flags);
+int TCPSocket::Receive(char* buf, int len) {
+	return recv(mSocket, buf, len, 0);
 }
 
 int TCPSocket::SetNonBlocking(bool inShouldBlock) {

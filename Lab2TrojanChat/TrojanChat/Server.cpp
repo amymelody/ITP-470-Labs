@@ -41,7 +41,7 @@ void Server::Run(USHORT inPort)
 			for (int i = clientProxies.size() - 1; i >= 0; i--) {
 				if (FD_ISSET(clientProxies[i]->GetTCPSocket()->GetSocket(), &readSet)) {
 					char data[64];
-					int size = clientProxies[i]->GetTCPSocket()->Receive(data, sizeof(data), 0);
+					int size = clientProxies[i]->GetTCPSocket()->Receive(data, sizeof(data));
 					if (size == SOCKET_ERROR) {
 						LOG(L"Client disconnected: %d", GetLastError());
 						clientProxies.erase(clientProxies.begin() + i);
@@ -55,7 +55,9 @@ void Server::Run(USHORT inPort)
 						else {
 							FD_ZERO(&writeSet);
 							for each (ClientProxy* cp in clientProxies) {
-								FD_SET(cp->GetTCPSocket()->GetSocket(), &writeSet);
+								if (cp != clientProxies[i]) {
+									FD_SET(cp->GetTCPSocket()->GetSocket(), &writeSet);
+								}
 							}
 							selectResult = TCPSocketUtil::Select(NULL, &writeSet, NULL);
 							if (selectResult < 0) {
@@ -81,9 +83,9 @@ void Server::Run(USHORT inPort)
 									for each (ClientProxy* cp in clientProxies) {
 										if (cp->name == nameStr) {
 											privateMessage = true;
-											msgStr = clientProxies[i]->name + " (private): " + msgStr;
+											string privateMessage = clientProxies[i]->name + " (private): " + msgStr;
 											if (FD_ISSET(cp->GetTCPSocket()->GetSocket(), &writeSet)) {
-												if (cp->GetTCPSocket()->Send(msgStr.c_str(), msgStr.length(), 0) == SOCKET_ERROR) {
+												if (cp->GetTCPSocket()->Send(privateMessage.c_str(), privateMessage.length()) == SOCKET_ERROR) {
 													LOG(L"Error Sending: %d", GetLastError());
 												}
 											}
@@ -94,7 +96,7 @@ void Server::Run(USHORT inPort)
 									dataStr = clientProxies[i]->name + ": " + dataStr;
 									for each (ClientProxy* cp in clientProxies) {
 										if (FD_ISSET(cp->GetTCPSocket()->GetSocket(), &writeSet)) {
-											if (cp->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length(), 0) == SOCKET_ERROR) {
+											if (cp->GetTCPSocket()->Send(dataStr.c_str(), dataStr.length()) == SOCKET_ERROR) {
 												LOG(L"Error Sending: %d", GetLastError());
 											}
 										}

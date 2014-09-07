@@ -12,13 +12,14 @@ void Client::Run(ULONG ipAddress, USHORT inPort, wstring name)
 		return;
 	}
 
+	wc->Write(L"Connecting to server...\n");
 	if (socket->Connect(ipAddress, inPort) == SOCKET_ERROR) {
 		LOG(L"Error Connecting: %d", GetLastError());
 		return;
 	}
 
 	string nameStr(name.begin(), name.end());
-	if (socket->Send(nameStr.c_str(), nameStr.length(), 0) == SOCKET_ERROR) {
+	if (socket->Send(nameStr.c_str(), nameStr.length()) == SOCKET_ERROR) {
 		LOG(L"Error Sending Name: %d", GetLastError());
 		return;
 	}
@@ -27,11 +28,12 @@ void Client::Run(ULONG ipAddress, USHORT inPort, wstring name)
 		LOG(L"Error Setting NonBlocking: %d", GetLastError());
 		return;
 	}
+	wc->Write(L"Connected\n");
 
 	for (;;)
 	{
 		char data[64];
-		int size = socket->Receive(data, sizeof(data), 0);
+		int size = socket->Receive(data, sizeof(data));
 		if (size != SOCKET_ERROR) {
 			string dataStr(data);
 			dataStr.resize(size);
@@ -46,13 +48,15 @@ void Client::Run(ULONG ipAddress, USHORT inPort, wstring name)
 		{
 			if (inputData.size() > 0)
 			{
+				wstring outputData = L"Me: " + inputData;
+				wc->Write(outputData.c_str());
+
 				char dest[64];
 				size_t dataSize;
 				wcstombs_s(&dataSize, dest, inputData.c_str(), sizeof(inputData));
 				string inputStr(dest);
-				inputStr.resize(dataSize);
 
-				if (socket->Send(inputStr.c_str(), inputStr.length(), 0) == SOCKET_ERROR) {
+				if (socket->Send(inputStr.c_str(), inputStr.length()) == SOCKET_ERROR) {
 					LOG(L"Error Sending: %d", GetLastError());
 				}
 			}
