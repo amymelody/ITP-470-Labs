@@ -19,11 +19,13 @@ void Client::Run(ULONG ipAddress, USHORT inPort, wstring name)
 
 	string nameStr(name.begin(), name.end());
 	if (socket->Send(nameStr.c_str(), nameStr.length(), 0) == SOCKET_ERROR) {
-		LOG(L"Error Sending: %d", GetLastError());
+		LOG(L"Error Sending Name: %d", GetLastError());
+		return;
 	}
 
 	if (socket->SetNonBlocking(true) == SOCKET_ERROR) {
 		LOG(L"Error Setting NonBlocking: %d", GetLastError());
+		return;
 	}
 
 	for (;;)
@@ -35,10 +37,8 @@ void Client::Run(ULONG ipAddress, USHORT inPort, wstring name)
 			dataStr.resize(size);
 			std::wstringstream wData;
 			wData << dataStr.c_str();
-
 			wc->Write(wData.str().c_str());
 		}
-
 
 		wc->ProcessPendingInput();
 		std::wstring inputData;

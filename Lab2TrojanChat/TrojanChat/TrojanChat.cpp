@@ -6,6 +6,7 @@
 
 int _tmain(int argc, WCHAR* argv[])
 {
+	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	TCPSocketUtil::StartUp();
 
 	if (argc == 2) {
