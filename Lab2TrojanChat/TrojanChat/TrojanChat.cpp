@@ -20,7 +20,7 @@ int _tmain(int argc, WCHAR* argv[])
 		wstring wstr = argv[1];
 		string portStr(wstr.begin(), wstr.end());
 
-		for (int i = 0; i < wstr.length(); i++) {
+		for (unsigned int i = 0; i < wstr.length(); i++) {
 			if (wstr[i] == ':') {
 				portStr.erase(0, i+1);
 				wstr.erase(i, portStr.length());

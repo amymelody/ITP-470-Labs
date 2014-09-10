@@ -42,7 +42,7 @@ void Server::Run(USHORT inPort)
 				if (FD_ISSET(clientProxies[i]->GetTCPSocket()->GetSocket(), &readSet)) {
 					char data[64];
 					int size = clientProxies[i]->GetTCPSocket()->Receive(data, sizeof(data));
-					if (size == SOCKET_ERROR) {
+					if (size <= 0) {
 						LOG(L"Client disconnected: %d", GetLastError());
 						clientProxies.erase(clientProxies.begin() + i);
 					}
@@ -72,7 +72,7 @@ void Server::Run(USHORT inPort)
 									string msgStr(dataStr);
 									msgStr.erase(0, 1);
 									string nameStr(msgStr);
-									for (int j = 0; j < msgStr.length(); j++) {
+									for (unsigned int j = 0; j < msgStr.length(); j++) {
 										if (msgStr[j] == ' ') {
 											msgStr.erase(0, j + 1);
 											nameStr.erase(j, msgStr.length() + 1);
