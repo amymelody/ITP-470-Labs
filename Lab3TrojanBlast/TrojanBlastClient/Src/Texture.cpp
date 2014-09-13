@@ -1,4 +1,5 @@
-#include <TrojanBlastPCH.h>
+#include <TrojanBlastClientPCH.h>
+#include "Texture.h"
 
 Texture::Texture( uint32_t inWidth, uint32_t inHeight, ID3D11ShaderResourceView* inShaderResourceView ) :
 	mWidth( inWidth ),

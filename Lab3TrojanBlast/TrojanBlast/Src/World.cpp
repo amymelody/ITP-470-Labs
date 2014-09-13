@@ -1,6 +1,5 @@
 #include <TrojanBlastPCH.h>
-
-
+#include "World.h"
 
 std::unique_ptr< World >	World::sInstance;
 

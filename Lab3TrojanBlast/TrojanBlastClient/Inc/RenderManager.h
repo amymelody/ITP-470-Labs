@@ -1,3 +1,5 @@
+#include "SpriteComponent.h"
+
 //I take care of rendering things!
 
 namespace DirectX

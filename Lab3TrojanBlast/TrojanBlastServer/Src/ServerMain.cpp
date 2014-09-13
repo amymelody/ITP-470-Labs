@@ -1,16 +1,10 @@
-
 #include <TrojanBlastServerPCH.h>
-
-
+#include "Server.h"
 
 int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow )
 {
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
-
-	/*
-
-	//uncomment this when you begin working on the server
 
 	if( Server::StaticInit() )
 	{
@@ -21,6 +15,5 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		//error
 		return 1;
 	}
-	*/
 }
 

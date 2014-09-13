@@ -1,3 +1,4 @@
+
 namespace MathUtils
 {
 	float GetRandomFloat();

@@ -1,4 +1,5 @@
-#include <TrojanBlastPCH.h>
+#include <TrojanBlastClientPCH.h>
+#include "GraphicsDriver.h"
 #include "CommonStates.h"
 
 using namespace DirectX;

@@ -1,3 +1,4 @@
+#include "GameObject.h"
 
 typedef GameObject* ( *GameObjectCreationFunc )();
 

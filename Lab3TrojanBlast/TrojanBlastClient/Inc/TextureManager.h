@@ -1,3 +1,5 @@
+#include "Texture.h"
+
 class TextureManager
 {
 public:

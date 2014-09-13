@@ -1,3 +1,5 @@
+#include "GameObject.h"
+
 /*
 * the world tracks all the live game objects. Failry inefficient for now, but not that much of a problem
 */

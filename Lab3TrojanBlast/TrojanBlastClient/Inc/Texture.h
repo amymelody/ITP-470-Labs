@@ -1,3 +1,8 @@
+#ifndef TEXTURE_H
+#define TEXTURE_H
+
+#include <d3d11.h>
+
 class Texture
 {
 public:
@@ -18,3 +23,5 @@ private:
 
 
 typedef shared_ptr< Texture >	TexturePtr;
+
+#endif

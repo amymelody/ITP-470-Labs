@@ -21,12 +21,24 @@
     <ClCompile Include="Src\Server.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\TommyCoinServer.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ShipServer.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\TrojanBlastServerPCH.h">
       <Filter>Inc</Filter>
     </ClInclude>
     <ClInclude Include="Inc\Server.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\TommyCoinServer.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\ShipServer.h">
       <Filter>Inc</Filter>
     </ClInclude>
   </ItemGroup>

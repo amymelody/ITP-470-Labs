@@ -1,4 +1,5 @@
 #include <TrojanBlastPCH.h>
+#include "MathUtils.h"
 
 float MathUtils::GetRandomFloat() 
 { 

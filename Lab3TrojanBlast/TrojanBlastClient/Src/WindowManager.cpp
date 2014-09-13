@@ -1,4 +1,6 @@
-#include <TrojanBlastPCH.h>
+#include <TrojanBlastClientPCH.h>
+#include "WindowManager.h"
+#include "InputManager.h"
 
 std::unique_ptr< WindowManager >	WindowManager::sInstance;
 

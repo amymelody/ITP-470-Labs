@@ -1,8 +1,10 @@
-#include <TrojanBlastPCH.h>
-
+#include <TrojanBlastClientPCH.h>
+#include "HUD.h"
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
 #include <DirectXColors.h>
+#include "GraphicsDriver.h"
+#include "ScoreBoardManager.h"
 
 using namespace DirectX;
 

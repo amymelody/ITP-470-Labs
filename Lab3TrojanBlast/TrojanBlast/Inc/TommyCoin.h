@@ -1,7 +1,8 @@
+#include "GameObject.h"
+
 class TommyCoin : public GameObject
 {
 public:
-	static	GameObject*	StaticCreate() { return new TommyCoin(); }
 
 	virtual uint32_t GetFourCCName() const override { return 'COIN'; }
 
@@ -9,6 +10,4 @@ public:
 
 protected:
 	TommyCoin();
-
-	SpriteComponentPtr	mSpriteComponent;
 };

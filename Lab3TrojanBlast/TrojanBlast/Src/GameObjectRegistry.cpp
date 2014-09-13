@@ -1,5 +1,6 @@
 #include <TrojanBlastPCH.h>
-
+#include "GameObjectRegistry.h"
+#include "World.h"
 
 std::unique_ptr< GameObjectRegistry >	GameObjectRegistry::sInstance;
 

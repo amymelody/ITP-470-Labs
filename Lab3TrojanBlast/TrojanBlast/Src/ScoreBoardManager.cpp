@@ -1,4 +1,5 @@
-#include "TrojanBlastPCH.h"
+#include <TrojanBlastPCH.h>
+#include "ScoreBoardManager.h"
 #include <DirectXColors.h>
 
 std::unique_ptr< ScoreBoardManager >	ScoreBoardManager::sInstance;

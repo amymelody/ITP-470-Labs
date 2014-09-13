@@ -1,4 +1,5 @@
 #include <TrojanBlastPCH.h>
+#include "StringUtils.h"
 
 wstring StringUtils::GetCommandLineArg( int inIndex )
 {

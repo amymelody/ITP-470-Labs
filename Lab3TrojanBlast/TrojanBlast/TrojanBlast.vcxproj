@@ -358,37 +358,21 @@
     <ClInclude Include="Inc\Engine.h" />
     <ClInclude Include="Inc\GameObject.h" />
     <ClInclude Include="Inc\GameObjectRegistry.h" />
-    <ClInclude Include="Inc\GraphicsDriver.h" />
-    <ClInclude Include="Inc\HUD.h" />
-    <ClInclude Include="Inc\InputAction.h" />
-    <ClInclude Include="Inc\InputManager.h" />
-    <ClInclude Include="Inc\InputState.h" />
     <ClInclude Include="Inc\MathUtils.h" />
-    <ClInclude Include="Inc\RenderManager.h" />
     <ClInclude Include="Inc\ScoreBoardManager.h" />
     <ClInclude Include="Inc\Ship.h" />
-    <ClInclude Include="Inc\SpriteComponent.h" />
     <ClInclude Include="Inc\StringUtils.h" />
-    <ClInclude Include="Inc\Texture.h" />
-    <ClInclude Include="Inc\TextureManager.h" />
     <ClInclude Include="Inc\Timing.h" />
     <ClInclude Include="Inc\TommyCoin.h" />
     <ClInclude Include="Inc\TrojanBlastPCH.h" />
-    <ClInclude Include="Inc\WindowManager.h" />
     <ClInclude Include="Inc\World.h" />
     <CLInclude Include="resource.h" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\GameObjectRegistry.cpp" />
-    <ClCompile Include="Src\GraphicsDriver.cpp" />
-    <ClCompile Include="Src\HUD.cpp" />
-    <ClCompile Include="Src\InputManager.cpp" />
     <ClCompile Include="Src\MathUtils.cpp" />
     <ClCompile Include="Src\ScoreBoardManager.cpp" />
     <ClCompile Include="Src\Ship.cpp" />
-    <ClCompile Include="Src\SpriteComponent.cpp" />
     <ClCompile Include="Src\StringUtils.cpp" />
-    <ClCompile Include="Src\Texture.cpp" />
-    <ClCompile Include="Src\TextureManager.cpp" />
     <ClCompile Include="Src\Timing.cpp">
       <FileType>CppHeader</FileType>
     </ClCompile>
@@ -401,13 +385,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TrojanBlastPCH.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Src\RenderManager.cpp" />
     <ClCompile Include="Src\TommyCoin.cpp" />
     <ClCompile Include="Src\TrojanBlastPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TrojanBlastPCH.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Src\WindowManager.cpp" />
     <ClCompile Include="Src\World.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TrojanBlastPCH.h</PrecompiledHeaderFile>

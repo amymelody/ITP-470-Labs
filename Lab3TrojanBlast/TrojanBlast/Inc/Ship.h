@@ -1,18 +1,17 @@
+#include "GameObject.h"
+
 class Ship : public GameObject
 {
 public:
-
-		static	GameObject*	StaticCreate()		{ return new Ship(); }
 	
 		virtual uint32_t GetFourCCName() const override { return 'SHIP'; }
 
 		virtual	Ship*	GetAsShip()	{ return this; }
 
-		virtual void Update()	override;
+		virtual void Update() {};
 
 		void SetIsLocallyControlled( bool inIsLocallyControlled )	{ mIsLocallyControlled = inIsLocallyControlled; }
 
-		void ProcessInput( float inDeltaTime, const InputState& inInputState );
 		void SimulateMovement( float inDeltaTime );
 
 		void ProcessCollisions();
@@ -24,10 +23,8 @@ public:
 
 
 protected:
+
 	Ship();
-
-
-private:
 
 	XMVECTOR			mVelocity;
 
@@ -35,9 +32,6 @@ private:
 	float				mMaxDrivenLinearSpeed;
 	float				mMaxDrivenLinearAcceleration;
 	float				mMaxDrivenRotationSpeed;
-
-	TexturePtr			mInactiveTexture;
-	TexturePtr			mThrustingTexture;
 
 
 	//bounce fraction when hitting various things
@@ -51,8 +45,6 @@ private:
 	bool				mIsThrusting;
 
 	uint32_t			mPlayerID;
-
-	SpriteComponentPtr	mSpriteComponent;
 
 };
 

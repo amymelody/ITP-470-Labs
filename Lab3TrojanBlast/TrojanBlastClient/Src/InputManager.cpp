@@ -1,4 +1,5 @@
-#include <TrojanBlastPCH.h>
+#include <TrojanBlastClientPCH.h>
+#include "InputManager.h"
 
 unique_ptr< InputManager >	InputManager::sInstance;
 

@@ -1,5 +1,6 @@
-#include<TrojanBlastPCH.h>
-#include<DirectXColors.h>
+#include <TrojanBlastPCH.h>
+#include "GameObject.h"
+#include <DirectXColors.h>
 
 using namespace DirectX;
 

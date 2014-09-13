@@ -19,9 +19,3 @@ using std::string;
 using std::wstring;
 
 using namespace DirectX;
-
-#include <GraphicsDriver.h>
-#include <WindowManager.h>
-
-#include <Engine.h>
-#include <Client.h>

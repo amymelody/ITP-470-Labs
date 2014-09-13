@@ -1,13 +1,12 @@
 #include <TrojanBlastPCH.h>
-#include <SpriteBatch.h>
+#include "TommyCoin.h"
+#include "Ship.h"
+#include "ScoreBoardManager.h"
 
 TommyCoin::TommyCoin()
 {
 	SetScale( GetScale() * 0.5f );
 	SetCollisionRadius( 0.25f );
-
-	mSpriteComponent.reset(new SpriteComponent(this));
-	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("Tommy"));
 }
 
 

@@ -1,5 +1,7 @@
 #include <TrojanBlastPCH.h>
-#include<SpriteBatch.h>
+#include "Ship.h"
+#include "Timing.h"
+#include "World.h"
 
 using namespace DirectX;
 
@@ -20,32 +22,6 @@ Ship::Ship() :
 	mPlayerID( 0 )
 {
 	SetCollisionRadius( 0.4f );
-	mInactiveTexture = TextureManager::sInstance->GetTexture( "spaceship" );
-	mThrustingTexture = TextureManager::sInstance->GetTexture( "spaceshipWithThrust" );
-
-	mSpriteComponent.reset(new SpriteComponent(this));
-}
-
-void Ship::ProcessInput( float inDeltaTime, const InputState& inInputState )
-{
-	//process our input....
-
-	//turning...
-	float newRotation = GetRotation() + inInputState.GetDesiredHorizontalDelta() * mMaxDrivenRotationSpeed * inDeltaTime;
-	SetRotation( newRotation );
-
-	//moving...
-	float inputForwardDelta = inInputState.GetDesiredVerticalDelta();
-	if( inputForwardDelta != 0.f )
-	{
-		XMVECTOR forwardVector = GetForwardVector();
-		mVelocity += XMVectorScale( forwardVector, inInputState.GetDesiredVerticalDelta() * inDeltaTime * mMaxDrivenLinearAcceleration ); 
-		mIsThrusting = true;
-	}
-	else
-	{
-		mIsThrusting = false;
-	}
 }
 
 void Ship::SimulateMovement( float inDeltaTime )
@@ -54,30 +30,6 @@ void Ship::SimulateMovement( float inDeltaTime )
 	SetLocation( GetLocation() + XMVectorScale( mVelocity, inDeltaTime ) );
 
 	ProcessCollisions();
-}
-
-void Ship::Update()
-{
-	float deltaTime = Timing::sInstance.GetDeltaTime();
-
-	if( mIsLocallyControlled)
-	{
-		const InputState& currentState = InputManager::sInstance->GetState();
-
-		ProcessInput( deltaTime, currentState );
-	}	
-
-	SimulateMovement( deltaTime );
-
-	if( mIsThrusting )
-	{
-		mSpriteComponent->SetTexture( mThrustingTexture );
-	}
-	else
-	{
-		mSpriteComponent->SetTexture( mInactiveTexture );
-	}
-
 }
 
 void Ship::ProcessCollisions()

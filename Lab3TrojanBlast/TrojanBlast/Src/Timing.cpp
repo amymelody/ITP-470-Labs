@@ -1,4 +1,6 @@
 #include <TrojanBlastPCH.h>
+#include "Timing.h"
+#include "Windows.h"
 
 Timing	Timing::sInstance;
 

@@ -1,3 +1,5 @@
+#ifndef INPUTSTATE_H
+#define INPUTSTATE_H
 
 class InputState
 {
@@ -20,3 +22,5 @@ private:
 	float	mDesiredForwardAmount, mDesiredBackAmount;
 
 };
+
+#endif

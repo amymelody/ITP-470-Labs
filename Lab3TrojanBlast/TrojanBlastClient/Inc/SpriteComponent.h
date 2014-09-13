@@ -1,3 +1,9 @@
+#ifndef SPRITECOMPONENT_H
+#define SPRITECOMPONENT_H
+
+#include "GameObject.h"
+#include "Texture.h"
+
 class SpriteComponent
 {
 public:
@@ -27,3 +33,5 @@ private:
 };
 
 typedef shared_ptr< SpriteComponent >	SpriteComponentPtr;
+
+#endif

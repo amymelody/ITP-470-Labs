@@ -1,5 +1,7 @@
-#include <TrojanBlastPCH.h>
-#include<SpriteBatch.h>
+#include <TrojanBlastClientPCH.h>
+#include "SpriteComponent.h"
+#include <SpriteBatch.h>
+#include "RenderManager.h"
 
 SpriteComponent::SpriteComponent( GameObject *inGameObject ) :
 	mGameObject( inGameObject )

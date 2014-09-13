@@ -1,3 +1,8 @@
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
+
+class Ship;
+
 class GameObject
 {
 public:
@@ -62,3 +67,5 @@ private:
 };
 
 typedef shared_ptr< GameObject >	GameObjectPtr;
+
+#endif;

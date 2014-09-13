@@ -21,14 +21,36 @@
   <ItemGroup>
     <ClCompile Include="Src\Client.cpp" />
     <ClCompile Include="Src\ClientMain.cpp" />
+    <ClCompile Include="Src\GraphicsDriver.cpp" />
+    <ClCompile Include="Src\HUD.cpp" />
+    <ClCompile Include="Src\InputManager.cpp" />
+    <ClCompile Include="Src\RenderManager.cpp" />
+    <ClCompile Include="Src\ShipClient.cpp" />
+    <ClCompile Include="Src\SpriteComponent.cpp" />
+    <ClCompile Include="Src\Texture.cpp" />
+    <ClCompile Include="Src\TextureManager.cpp" />
+    <ClCompile Include="Src\TommyCoinClient.cpp" />
     <ClCompile Include="Src\TrojanBlastClientPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Src\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\Client.h" />
+    <ClInclude Include="Inc\GraphicsDriver.h" />
+    <ClInclude Include="Inc\HUD.h" />
+    <ClInclude Include="Inc\InputAction.h" />
+    <ClInclude Include="Inc\InputManager.h" />
+    <ClInclude Include="Inc\InputState.h" />
+    <ClInclude Include="Inc\RenderManager.h" />
+    <ClInclude Include="Inc\ShipClient.h" />
+    <ClInclude Include="Inc\SpriteComponent.h" />
+    <ClInclude Include="Inc\Texture.h" />
+    <ClInclude Include="Inc\TextureManager.h" />
+    <ClInclude Include="Inc\TommyCoinClient.h" />
     <ClInclude Include="Inc\TrojanBlastClientPCH.h" />
+    <ClInclude Include="Inc\WindowManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5B4C5E90-6135-4E28-8545-FF1CAF5E4971}</ProjectGuid>

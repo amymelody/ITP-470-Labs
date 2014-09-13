@@ -1,3 +1,5 @@
+#include "InputAction.h"
+#include "InputState.h"
 
 class InputManager
 {

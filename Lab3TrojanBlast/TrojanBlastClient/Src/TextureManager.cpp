@@ -1,5 +1,7 @@
-#include <TrojanBlastPCH.h>
+#include <TrojanBlastClientPCH.h>
+#include "TextureManager.h"
 #include <DDSTextureLoader.h>
+#include "GraphicsDriver.h"
 
 std::unique_ptr< TextureManager >		TextureManager::sInstance;
 
