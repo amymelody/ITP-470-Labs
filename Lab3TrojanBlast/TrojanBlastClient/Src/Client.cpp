@@ -24,19 +24,20 @@ bool Client::StaticInit( HINSTANCE hInstance, int inCmdShow )
         return false;
     }
 
-	TextureManager::StaticInit();
-	RenderManager::StaticInit();
-	HUD::StaticInit();
-	InputManager::StaticInit();
-
 	sInstance.reset( new Client() );
 
 	GameObjectRegistry::sInstance->RegisterCreationFunction('SHIP', ShipClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('COIN', TommyCoinClient::StaticCreate);
 
+	TextureManager::StaticInit();
+	RenderManager::StaticInit();
+	HUD::StaticInit();
+	InputManager::StaticInit();
+
 	return true;
 }
 
 void Client::DoFrame() {
+	Engine::DoFrame();
 	RenderManager::sInstance->Render();
 }

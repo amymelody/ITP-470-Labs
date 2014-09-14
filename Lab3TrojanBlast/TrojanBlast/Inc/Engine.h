@@ -12,10 +12,10 @@ public:
 protected:
 
 	Engine();
+	virtual void	DoFrame();
 
 private:
 
-	virtual void	DoFrame();
 			void	SetupWorld();
 			int		DoRunLoop();
 

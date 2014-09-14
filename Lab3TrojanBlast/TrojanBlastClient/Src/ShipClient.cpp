@@ -7,7 +7,6 @@
 
 ShipClient::ShipClient() : Ship()
 {
-	
 	mInactiveTexture = TextureManager::sInstance->GetTexture("spaceship");
 	mThrustingTexture = TextureManager::sInstance->GetTexture("spaceshipWithThrust");
 

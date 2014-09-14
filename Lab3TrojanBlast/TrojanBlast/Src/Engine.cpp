@@ -18,9 +18,7 @@ Engine::Engine()
 	srand( static_cast< uint32_t >( time( nullptr ) ) );
 	
 	GameObjectRegistry::StaticInit();
-
 	World::StaticInit();
-
 	ScoreBoardManager::StaticInit();
 }
 
