@@ -16,7 +16,8 @@ std::unique_ptr< Engine >	Engine::sInstance;
 Engine::Engine()
 {
 	srand( static_cast< uint32_t >( time( nullptr ) ) );
-	
+	timeElapsed = 0;
+
 	GameObjectRegistry::StaticInit();
 	World::StaticInit();
 	ScoreBoardManager::StaticInit();
@@ -107,8 +108,10 @@ int Engine::DoRunLoop()
 
 void Engine::DoFrame()
 {
-  
+
 	Timing::sInstance.Update();
+
+	timeElapsed += Timing::sInstance.GetDeltaTime();
 
 	World::sInstance->Update();
 

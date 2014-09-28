@@ -49,6 +49,15 @@
     <ClInclude Include="Inc\TommyCoin.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="Inc\PacketBuffer.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\UDPSocket.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\UDPSocketUtil.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SimpleSample.rc">
@@ -87,6 +96,15 @@
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\TommyCoin.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\UDPSocketUtil.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PacketBuffer.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\UDPSocket.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

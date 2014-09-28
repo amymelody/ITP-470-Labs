@@ -5,6 +5,7 @@
 #include <d3d11.h>
 #include <memory>
 #include <DirectXMath.h>
+#include <WinSock2.h>
 
 #include <vector>
 #include <unordered_map>
