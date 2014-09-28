@@ -15,4 +15,5 @@ private:
 	ULONG mIpAddress;
 	sockaddr_in mSockAddress;
 	PacketBuffer* mNameBuffer;
+	int mPlayerID;
 };

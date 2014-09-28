@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "ClientProxy.h"
 
 class Server : public Engine
 {
@@ -10,5 +11,9 @@ public:
 private:
 	Server(USHORT inPort) : mInPort(inPort), Engine() {};
 	void DoFrame();
+	ClientProxy* GetExistingClientProxy(sockaddr address);
+
 	USHORT mInPort;
+	vector<ClientProxy*> mClientProxies;
+	int mPlayerCount;
 };
