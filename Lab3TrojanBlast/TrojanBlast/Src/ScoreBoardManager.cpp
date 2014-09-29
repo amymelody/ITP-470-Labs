@@ -1,6 +1,7 @@
 #include <TrojanBlastPCH.h>
 #include "ScoreBoardManager.h"
 #include <DirectXColors.h>
+#include "StringUtils.h"
 
 std::unique_ptr< ScoreBoardManager >	ScoreBoardManager::sInstance;
 
@@ -8,14 +9,6 @@ std::unique_ptr< ScoreBoardManager >	ScoreBoardManager::sInstance;
 void ScoreBoardManager::StaticInit()
 {
 	sInstance.reset( new ScoreBoardManager() );
-}
-
-ScoreBoardManager::ScoreBoardManager()
-{
-	mDefaultColors.push_back( DirectX::Colors::LightYellow );
-	mDefaultColors.push_back( DirectX::Colors::LightBlue );
-	mDefaultColors.push_back( DirectX::Colors::LightPink );
-	mDefaultColors.push_back( DirectX::Colors::LightGreen );
 }
 
 ScoreBoardManager::Entry::Entry( uint32_t inPlayerID, const wstring& inPlayerName, const XMVECTORF32& inColor ) :
@@ -48,6 +41,27 @@ ScoreBoardManager::Entry* ScoreBoardManager::GetEntry( uint32_t inPlayerID )
 	}
 
 	return nullptr;
+}
+
+ScoreBoardManager::ScoreBoardManager()
+{
+	mDefaultColors.push_back(DirectX::Colors::LightYellow);
+	mDefaultColors.push_back(DirectX::Colors::LightBlue);
+	mDefaultColors.push_back(DirectX::Colors::LightPink);
+	mDefaultColors.push_back(DirectX::Colors::LightGreen);
+}
+
+bool ScoreBoardManager::Entry::Write(PacketBuffer* inPacketBuffer) const {
+	uint32_t score = mScore;
+	return inPacketBuffer->WriteInt(score);
+}
+
+bool ScoreBoardManager::Entry::Read(PacketBuffer* inPacketBuffer) {
+	uint32_t score;
+	if (inPacketBuffer->ReadInt(score)) {
+		SetScore(score);
+	}
+	return false;
 }
 
 bool ScoreBoardManager::RemoveEntry( uint32_t inPlayerID )

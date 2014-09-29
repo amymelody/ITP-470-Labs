@@ -19,6 +19,8 @@ public:
 	bool ReadBool(bool& outBool);
 	bool WriteVector(const XMVECTOR& inVector);
 	bool ReadVector(XMVECTOR& outVector);
+	bool WriteVectorF32(const XMVECTORF32& inVector);
+	bool ReadVectorF32(XMVECTORF32& outVector);
 	bool WriteInt(uint32_t& inInt);
 	bool ReadInt(uint32_t& outInt);
 };

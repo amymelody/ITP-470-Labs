@@ -30,6 +30,14 @@ bool PacketBuffer::ReadVector(XMVECTOR& outVector) {
 	return ReadData(&outVector, sizeof(XMVECTOR));
 }
 
+bool PacketBuffer::WriteVectorF32(const XMVECTORF32& inVector) {
+	return WriteData(&inVector, sizeof(XMVECTORF32));
+}
+
+bool PacketBuffer::ReadVectorF32(XMVECTORF32& outVector) {
+	return ReadData(&outVector, sizeof(XMVECTORF32));
+}
+
 bool PacketBuffer::WriteBool(const bool& inBool) {
 	return WriteData(&inBool, 1);
 }

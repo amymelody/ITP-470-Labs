@@ -13,6 +13,7 @@
 #include "UDPSocket.h"
 #include "StringUtils.h"
 #include "World.h"
+#include "ScoreBoardManager.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -47,7 +48,7 @@ bool Client::StaticInit(HINSTANCE hInstance, int inCmdShow, USHORT inPort, ULONG
 
 namespace {
 	GameObjectPtr findObjectWithID(uint32_t networkID) {
-		for (int i = 0; i < World::sInstance->GetGameObjects().size(); i++) {
+		for (unsigned int i = 0; i < World::sInstance->GetGameObjects().size(); i++) {
 			GameObjectPtr obj = World::sInstance->GetGameObjects().at(i);
 			if (obj->mNetworkID == networkID) {
 				return obj;
@@ -107,9 +108,11 @@ void Client::DoFrame() {
 			mPlayerID = std::stoi(msgStr);
 		}
 		if (wlcmStr == "TJBS") {
-			uint32_t networkID;
-			outBuffer->ReadInt(networkID);
-			while (networkID != -1) {
+			uint32_t numObjects;
+			outBuffer->ReadInt(numObjects);
+			for (unsigned int i = 0; i < numObjects; i++) {
+				uint32_t networkID;
+				outBuffer->ReadInt(networkID);
 				GameObjectPtr obj = findObjectWithID(networkID);
 				uint32_t ccCode;
 				outBuffer->ReadInt(ccCode);
@@ -119,8 +122,23 @@ void Client::DoFrame() {
 				}
 				obj->Read(outBuffer);
 				obj->updated = true;
+			}
 
-				outBuffer->ReadInt(networkID);
+			uint32_t numEntries;
+			outBuffer->ReadInt(numEntries);
+			for (unsigned int i = 0; i < numEntries; i++) {
+				uint32_t playerID;
+				outBuffer->ReadInt(playerID);
+				string playerName;
+				outBuffer->ReadString(playerName);
+				ScoreBoardManager::Entry* entry = ScoreBoardManager::sInstance->GetEntry(playerID);
+				if (!entry) {
+					wstring name(playerName.begin(), playerName.end());
+					ScoreBoardManager::sInstance->AddEntry(playerID, name);
+					entry = ScoreBoardManager::sInstance->GetEntry(playerID);
+				}
+				entry->Read(outBuffer);
+				entry->updated = true;
 			}
 
 			for (int i = World::sInstance->GetGameObjects().size()-1; i >= 0; i--) {
@@ -130,6 +148,16 @@ void Client::DoFrame() {
 				}
 				else {
 					obj->updated = false;
+				}
+			}
+
+			for (int i = ScoreBoardManager::sInstance->GetEntries().size() - 1; i >= 0; i--) {
+				ScoreBoardManager::Entry entry = ScoreBoardManager::sInstance->GetEntries().at(i);
+				if (!entry.updated) {
+					ScoreBoardManager::sInstance->RemoveEntry(entry.GetPlayerID());
+				}
+				else {
+					entry.updated = false;
 				}
 			}
 		}

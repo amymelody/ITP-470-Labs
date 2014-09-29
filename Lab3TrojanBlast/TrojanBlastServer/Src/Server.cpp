@@ -159,8 +159,10 @@ void Server::DoFrame() {
 
 		string dataStr = "TJBS";
 		dataBuffer->WriteString(dataStr);
+		uint32_t numGameObjects = World::sInstance->GetGameObjects().size();
+		dataBuffer->WriteInt(numGameObjects);
 
-		for (int i = 0; i < World::sInstance->GetGameObjects().size(); i++) {
+		for (int i = 0; i < numGameObjects; i++) {
 			GameObjectPtr obj = World::sInstance->GetGameObjects().at(i);
 			dataBuffer->WriteInt(obj->mNetworkID);
 			uint32_t idName = obj->GetFourCCName();
@@ -168,8 +170,18 @@ void Server::DoFrame() {
 			obj->Write(dataBuffer);
 		}
 
-		uint32_t endOfPacket = -1;
-		dataBuffer->WriteInt(endOfPacket);
+		uint32_t numEntries = ScoreBoardManager::sInstance->GetEntries().size();
+		dataBuffer->WriteInt(numEntries);
+
+		for (int i = 0; i < numEntries; i++) {
+			ScoreBoardManager::Entry entry = ScoreBoardManager::sInstance->GetEntries().at(i);
+			uint32_t playerID = entry.GetPlayerID();
+			dataBuffer->WriteInt(playerID);
+			wstring playerName = entry.GetPlayerName();
+			string name(playerName.begin(), playerName.end());
+			dataBuffer->WriteString(name);
+			entry.Write(dataBuffer);
+		}
 
 		for (ClientProxy* cp : mClientProxies) {
 			if (mSocket->SendTo(dataBuffer, cp->mAddress) == SOCKET_ERROR) {

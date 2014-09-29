@@ -1,3 +1,4 @@
+#include "PacketBuffer.h"
 
 class ScoreBoardManager
 {
@@ -16,17 +17,18 @@ public:
 		const wstring&	GetPlayerName()	const	{ return mPlayerName; }
 		const wstring&	GetFormattedNameScore()	const	{ return mFormattedNameScore; }
 		int32_t			GetScore()		const	{ return mScore; }
+		bool Write(PacketBuffer* inPacketBuffer) const;
+		bool Read(PacketBuffer* inPacketBuffer);
 
 		void			SetScore( int32_t inScore );
+		bool			updated;
 
 	private:
 		XMVECTORF32		mColor;
-		
 		uint32_t		mPlayerID;
 		wstring			mPlayerName;
 		
 		int32_t			mScore;
-
 		wstring			mFormattedNameScore;
 	};
 
