@@ -6,8 +6,7 @@ class Engine
 {
 public:
 
-	static bool							StaticInit( HINSTANCE hInstance, int inCmdShow );
-	static std::unique_ptr< Engine >	sInstance;
+	static bool	StaticInit( HINSTANCE hInstance, int inCmdShow );
 	virtual int Run();
 
 protected:
@@ -19,7 +18,6 @@ protected:
 
 private:
 
-			void	SetupWorld();
 			int		DoRunLoop();
 
 

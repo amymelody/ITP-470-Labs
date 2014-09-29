@@ -1,14 +1,17 @@
 #pragma once
+#include "InputState.h"
+
 class ClientProxy
 {
 public:
-	ClientProxy(wstring name, int playerID, sockaddr address) : mName(name), mPlayerID(playerID), mAddress(address) {};
+	ClientProxy(string name, int playerID, sockaddr address) : mName(name), mPlayerID(playerID), mAddress(address) {};
 	~ClientProxy() {};
 
 	sockaddr mAddress;
 	int mPlayerID;
+	InputState mInputState;
 
 private:
-	wstring mName;
+	string mName;
 };
 

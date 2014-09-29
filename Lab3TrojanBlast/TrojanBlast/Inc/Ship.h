@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "InputState.h"
 
 class Ship : public GameObject
 {
@@ -10,23 +11,19 @@ public:
 
 		virtual void Update() {};
 
-		void SetIsLocallyControlled( bool inIsLocallyControlled )	{ mIsLocallyControlled = inIsLocallyControlled; }
-
-		void SimulateMovement( float inDeltaTime );
-
-		void ProcessCollisions();
-		void ProcessCollisionsWithScreenWalls();
-
 		void		SetPlayerID( uint32_t inPlayerID )			{ mPlayerID = inPlayerID; }
 		uint32_t	GetPlayerID()						const 	{ return mPlayerID; }
 
+		bool Write(PacketBuffer* inPacketBuffer) const;
+		bool Read(PacketBuffer* inPacketBuffer);
 
+		XMVECTOR			mVelocity;
+
+		float				mShipRestitution;
 
 protected:
 
 	Ship();
-
-	XMVECTOR			mVelocity;
 
 
 	float				mMaxDrivenLinearSpeed;
@@ -36,10 +33,6 @@ protected:
 
 	//bounce fraction when hitting various things
 	float				mWallRestitution;
-	float				mShipRestitution;
-
-	//whether this host is in control of this ship
-	bool				mIsLocallyControlled;
 
 	//whether input has told us we're thrusting
 	bool				mIsThrusting;

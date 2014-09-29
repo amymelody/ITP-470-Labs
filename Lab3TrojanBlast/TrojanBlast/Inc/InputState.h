@@ -1,6 +1,8 @@
 #ifndef INPUTSTATE_H
 #define INPUTSTATE_H
 
+#include "PacketBuffer.h"
+
 class InputState
 {
 public:
@@ -14,6 +16,9 @@ public:
 
 	float GetDesiredHorizontalDelta()	const { return mDesiredRightAmount - mDesiredLeftAmount; }
 	float GetDesiredVerticalDelta()		const { return mDesiredForwardAmount - mDesiredBackAmount; }
+
+	bool Write(PacketBuffer* inPacketBuffer) const;
+	bool Read(PacketBuffer* inPacketBuffer);
 
 private:
 	friend class InputManager;

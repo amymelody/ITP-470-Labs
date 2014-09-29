@@ -59,9 +59,6 @@
     <ClInclude Include="Inc\Client.h">
       <Filter>Inc</Filter>
     </ClInclude>
-    <ClInclude Include="Inc\InputState.h">
-      <Filter>Inc</Filter>
-    </ClInclude>
     <ClInclude Include="Inc\RenderManager.h">
       <Filter>Inc</Filter>
     </ClInclude>

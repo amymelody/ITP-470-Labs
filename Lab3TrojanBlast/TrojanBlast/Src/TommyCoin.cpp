@@ -9,13 +9,10 @@ TommyCoin::TommyCoin()
 	SetCollisionRadius( 0.25f );
 }
 
+bool TommyCoin::Write(PacketBuffer* inPacketBuffer) const {
+	return inPacketBuffer->WriteVector(mLocation);
+}
 
-bool TommyCoin::HandleCollisionWithShip( Ship* inShip )
-{
-	//kill yourself!
-	SetDoesWantToDie( true );
-
-	ScoreBoardManager::sInstance->IncScore( inShip->GetPlayerID(), 1 );
-
-	return false;
+bool TommyCoin::Read(PacketBuffer* inPacketBuffer) {
+	return inPacketBuffer->ReadVector(mLocation);
 }

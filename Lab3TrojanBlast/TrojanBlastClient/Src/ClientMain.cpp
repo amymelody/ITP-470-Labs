@@ -18,7 +18,7 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		}
 	}
 
-	wstring nameStr(portStr.begin(), portStr.end());
+	string nameStr(portStr.begin(), portStr.end());
 
 	for (unsigned int i = 0; i < nameStr.length(); i++) {
 		if (nameStr[i] == ' ') {

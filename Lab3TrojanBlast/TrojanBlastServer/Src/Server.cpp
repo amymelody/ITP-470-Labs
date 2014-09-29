@@ -6,10 +6,15 @@
 #include "UDPSocketUtil.h"
 #include "UDPSocket.h"
 #include "StringUtils.h"
+#include "MathUtils.h"
+#include "ScoreBoardManager.h"
+#include "World.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
 typedef GameObject* (*GameObjectCreationFunc)();
+
+std::unique_ptr< Server >	Server::sInstance;
 
 bool Server::StaticInit(USHORT inPort)
 {
@@ -19,6 +24,49 @@ bool Server::StaticInit(USHORT inPort)
 	GameObjectRegistry::sInstance->RegisterCreationFunction('COIN', TommyCoinServer::StaticCreate);
 
 	return true;
+}
+
+
+void Server::CreateRandomCoins(int inCoinCount)
+{
+	XMVECTOR coinMin = XMVectorSet(-5.f, -3.f, 0.f, 0.f);
+	XMVECTOR coinMax = XMVectorSet(5.f, 3.f, 0.f, 0.f);
+	GameObjectPtr go;
+
+	//make a coin somewhere- where will these come from?
+	for (int i = 0; i < inCoinCount; ++i)
+	{
+		mObjectCount++;
+		go = GameObjectRegistry::sInstance->CreateGameObject('COIN');
+		XMVECTOR coinLocation = MathUtils::GetRandomVector(coinMin, coinMax);
+		go->SetLocation(coinLocation);
+		go->mNetworkID = mObjectCount;
+	}
+}
+
+namespace {
+
+	ShipPtr CreateShipForPlayer(uint32_t inPlayerID, uint32_t inNetworkID)
+	{
+		ShipPtr ship;
+		ship = std::static_pointer_cast<Ship>(GameObjectRegistry::sInstance->CreateGameObject('SHIP'));
+		ship->SetColor(ScoreBoardManager::sInstance->GetEntry(inPlayerID)->GetColor());
+		ship->SetPlayerID(inPlayerID);
+		ship->mNetworkID = inNetworkID;
+
+		return ship;
+	}
+}
+
+void Server::SetupWorld()
+{
+
+	//spawn some random coins
+	CreateRandomCoins(10);
+
+	//spawn more random coins!
+	CreateRandomCoins(10);
+
 }
 
 int Server::Run() {
@@ -33,6 +81,9 @@ int Server::Run() {
 	}
 
 	mPlayerCount = 0;
+	mObjectCount = 0;
+
+	SetupWorld();
 
 	return Engine::Run();
 }
@@ -50,33 +101,78 @@ void Server::DoFrame() {
 		}
 	}
 	if (retVal > 0) {
-		wchar_t* message = new wchar_t[retVal];
-		outBuffer->ReadData(message, retVal);
-		wstring msgStr(message);
-		wstring heloStr(message);
-		heloStr.erase(4, heloStr.length() - 4);
-		if (heloStr == L"HELO") {
+		string msgStr;
+		outBuffer->ReadString(msgStr);
+		string identifierStr(msgStr);
+		identifierStr.erase(4);
+		if (identifierStr == "HELO") {
 
-			wstring wlcm;
+			string wlcm;
 
 			ClientProxy* cp = GetExistingClientProxy(outAddr);
 			if (cp) {
-				wlcm = std::to_wstring(cp->mPlayerID);
+				wlcm = std::to_string(cp->mPlayerID);
 			}
 			else {
 				mPlayerCount++;
 				msgStr.erase(0, 4);
-				OutputDebugStringW(msgStr.c_str());
+				OutputDebugStringA(msgStr.c_str());
 				mClientProxies.push_back(new ClientProxy(msgStr, mPlayerCount, outAddr));
 
-				wlcm = std::to_wstring(mPlayerCount);
+				wlcm = std::to_string(mPlayerCount);
+
+				wstring playerName(msgStr.begin(), msgStr.end());
+				if (playerName.size() <= 0)
+				{
+					playerName = L"No Name";
+				}
+				ScoreBoardManager::sInstance->AddEntry(mPlayerCount, playerName);
+
+				mObjectCount++;
+				ShipPtr playerShip = CreateShipForPlayer(mPlayerCount, mObjectCount);
 			}
 
-			wlcm = L"WLCM" + wlcm;
+			wlcm = "WLCM" + wlcm;
 			PacketBuffer* wlcmBuffer = new PacketBuffer();
-			wlcmBuffer->WriteData(wlcm.c_str(), sizeof(wlcm));
+			wlcmBuffer->WriteString(wlcm);
 
 			if (mSocket->SendTo(wlcmBuffer, outAddr) == SOCKET_ERROR) {
+				LOG(L"Error Sending: %d", GetLastError());
+			}
+		}
+		
+		if (identifierStr == "TJBC") {
+
+			ClientProxy* cp = GetExistingClientProxy(outAddr);
+			if (cp) {
+				cp->mInputState.Read(outBuffer);
+			}
+
+		}
+		
+	}
+
+	//Send entire world state
+	if (timeElapsed >= 1.0f / 30.0f) {
+		timeElapsed = 0;
+		PacketBuffer* dataBuffer = new PacketBuffer();
+
+		string dataStr = "TJBS";
+		dataBuffer->WriteString(dataStr);
+
+		for (int i = 0; i < World::sInstance->GetGameObjects().size(); i++) {
+			GameObjectPtr obj = World::sInstance->GetGameObjects().at(i);
+			dataBuffer->WriteInt(obj->mNetworkID);
+			uint32_t idName = obj->GetFourCCName();
+			dataBuffer->WriteInt(idName);
+			obj->Write(dataBuffer);
+		}
+
+		uint32_t endOfPacket = -1;
+		dataBuffer->WriteInt(endOfPacket);
+
+		for (ClientProxy* cp : mClientProxies) {
+			if (mSocket->SendTo(dataBuffer, cp->mAddress) == SOCKET_ERROR) {
 				LOG(L"Error Sending: %d", GetLastError());
 			}
 		}

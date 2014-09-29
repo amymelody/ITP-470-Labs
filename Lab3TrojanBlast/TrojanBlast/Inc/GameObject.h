@@ -1,6 +1,8 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#include "PacketBuffer.h"
+
 class Ship;
 
 class GameObject
@@ -16,6 +18,11 @@ public:
 	virtual	Ship*	GetAsShip()	{ return nullptr; }
 
 	virtual uint32_t GetFourCCName() const = 0;
+
+	uint32_t mNetworkID;
+
+	virtual bool Write(PacketBuffer* inPacketBuffer) const { return false; }
+	virtual bool Read(PacketBuffer* inPacketBuffer) { return false; }
 
 	//return whether to keep processing collision
 	virtual bool	HandleCollisionWithShip( Ship* inShip ) { ( void ) inShip; return true; }
@@ -46,19 +53,23 @@ public:
 
 			bool		DoesWantToDie()				const				{ return mDoesWantToDie; }
 			void		SetDoesWantToDie( bool inWants )				{ mDoesWantToDie = inWants; }
-private:
 
-	
+			bool updated;
+
+protected:
 
 	XMVECTOR										mLocation;
+
 	XMVECTOR										mColor;
+	float											mRotation;
+
+private:
 
 	float											mRealWidth;
 	
 	float											mCollisionRadius;
 
 
-	float											mRotation;
 	float											mScale;
 	int												mIndexInWorld;
 

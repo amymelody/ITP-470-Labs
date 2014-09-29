@@ -1,5 +1,4 @@
 #include "Ship.h"
-#include "InputState.h"
 #include "Texture.h"
 #include "SpriteComponent.h"
 
@@ -13,7 +12,6 @@ protected:
 	ShipClient();
 
 private:
-	void ProcessInput(float inDeltaTime, const InputState& inInputState);
 
 	TexturePtr			mInactiveTexture;
 	TexturePtr			mThrustingTexture;

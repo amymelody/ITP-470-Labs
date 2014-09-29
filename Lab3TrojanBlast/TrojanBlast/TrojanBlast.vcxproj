@@ -358,6 +358,7 @@
     <ClInclude Include="Inc\Engine.h" />
     <ClInclude Include="Inc\GameObject.h" />
     <ClInclude Include="Inc\GameObjectRegistry.h" />
+    <ClInclude Include="Inc\InputState.h" />
     <ClInclude Include="Inc\MathUtils.h" />
     <ClInclude Include="Inc\PacketBuffer.h" />
     <ClInclude Include="Inc\ScoreBoardManager.h" />
@@ -372,6 +373,7 @@
     <CLInclude Include="resource.h" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\GameObjectRegistry.cpp" />
+    <ClCompile Include="Src\InputState.cpp" />
     <ClCompile Include="Src\MathUtils.cpp" />
     <ClCompile Include="Src\PacketBuffer.cpp" />
     <ClCompile Include="Src\ScoreBoardManager.cpp" />

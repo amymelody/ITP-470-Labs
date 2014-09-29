@@ -42,7 +42,6 @@
     <ClInclude Include="Inc\HUD.h" />
     <ClInclude Include="Inc\InputAction.h" />
     <ClInclude Include="Inc\InputManager.h" />
-    <ClInclude Include="Inc\InputState.h" />
     <ClInclude Include="Inc\RenderManager.h" />
     <ClInclude Include="Inc\ShipClient.h" />
     <ClInclude Include="Inc\SpriteComponent.h" />

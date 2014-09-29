@@ -4,13 +4,15 @@
 class Client : public Engine
 {
 public:
-	static bool StaticInit( HINSTANCE hInstance, int inCmdShow, USHORT inPort, ULONG ipAddress, wstring name );
+	static bool StaticInit( HINSTANCE hInstance, int inCmdShow, USHORT inPort, ULONG ipAddress, string name );
+	static std::unique_ptr< Client > sInstance;
 	int Run();
 
 private:
-	Client(USHORT inPort, ULONG ipAddress, wstring name) : mInPort(inPort), mIpAddress(ipAddress), mName(name), Engine() {};
+	Client(USHORT inPort, ULONG ipAddress, string name) : mInPort(inPort), mIpAddress(ipAddress), mName(name), Engine() {};
 	void DoFrame();
-	wstring mName;
+
+	string mName;
 	USHORT mInPort;
 	ULONG mIpAddress;
 	sockaddr_in mSockAddress;
