@@ -4,14 +4,15 @@
 
 PacketBuffer::PacketBuffer()
 {
-	mBuffer = new char[1600];
-	mBufferCapacity = 1600;
+	mBuffer = new char[1024];
+	mBufferCapacity = 1024;
 	mBufferHead = 0;
 }
 
 
 PacketBuffer::~PacketBuffer()
 {
+	delete[] mBuffer;
 }
 
 bool PacketBuffer::WriteInt(uint32_t& inInt) {

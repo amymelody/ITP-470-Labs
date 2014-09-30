@@ -52,6 +52,8 @@ void World::Update()
 		//you might suddenly want to die after your update, so check again
 		if( go->DoesWantToDie() )
 		{
+			uint32_t id = go->mNetworkID;
+			go->GetFourCCName();
 			RemoveGameObject( go );
 			--i;
 			--c;

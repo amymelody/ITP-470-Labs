@@ -94,6 +94,9 @@ void Client::DoFrame() {
 	int retVal = mSocket->ReceiveFrom(outBuffer, outAddr);
 	if (retVal == SOCKET_ERROR) {
 		int error = GetLastError();
+		if (error == WSAECONNRESET) {
+			PostQuitMessage(WM_QUIT);
+		}
 		if (error != WSAEWOULDBLOCK) {
 			LOG(L"Error Receiving: %d", error);
 		}
@@ -104,6 +107,7 @@ void Client::DoFrame() {
 		string wlcmStr(msgStr);
 		wlcmStr.erase(4);
 		if (wlcmStr == "WLCM") {
+			delete mNameBuffer;
 			msgStr.erase(0, 4);
 			mPlayerID = std::stoi(msgStr);
 		}
@@ -140,6 +144,7 @@ void Client::DoFrame() {
 				entry->Read(outBuffer);
 				entry->updated = true;
 			}
+			vector<ScoreBoardManager::Entry> entries = ScoreBoardManager::sInstance->GetEntries();
 
 			for (int i = World::sInstance->GetGameObjects().size()-1; i >= 0; i--) {
 				GameObjectPtr obj = World::sInstance->GetGameObjects().at(i);
@@ -152,12 +157,11 @@ void Client::DoFrame() {
 			}
 
 			for (int i = ScoreBoardManager::sInstance->GetEntries().size() - 1; i >= 0; i--) {
-				ScoreBoardManager::Entry entry = ScoreBoardManager::sInstance->GetEntries().at(i);
-				if (!entry.updated) {
-					ScoreBoardManager::sInstance->RemoveEntry(entry.GetPlayerID());
+				if (!ScoreBoardManager::sInstance->GetEntries().at(i).updated) {
+					ScoreBoardManager::sInstance->RemoveEntry(ScoreBoardManager::sInstance->GetEntries().at(i).GetPlayerID());
 				}
 				else {
-					entry.updated = false;
+					ScoreBoardManager::sInstance->GetEntries().at(i).SetUpdated(false);
 				}
 			}
 		}

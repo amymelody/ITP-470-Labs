@@ -9,6 +9,7 @@
 #include "MathUtils.h"
 #include "ScoreBoardManager.h"
 #include "World.h"
+#include "Timing.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -88,15 +89,37 @@ int Server::Run() {
 	return Engine::Run();
 }
 
+namespace {
+	GameObjectPtr findObjectWithID(uint32_t networkID) {
+		for (unsigned int i = 0; i < World::sInstance->GetGameObjects().size(); i++) {
+			GameObjectPtr obj = World::sInstance->GetGameObjects().at(i);
+			if (obj->mNetworkID == networkID) {
+				return obj;
+			}
+		}
+
+		return NULL;
+	}
+}
+
 void Server::DoFrame() {
 	Engine::DoFrame();
+
+	for (int i = mClientProxies.size() - 1; i >= 0; i--) {
+		mClientProxies.at(i)->timeSinceUpdate += Timing::sInstance.GetDeltaTime();
+		if (mClientProxies.at(i)->timeSinceUpdate >= 3.0f) {
+			ScoreBoardManager::sInstance->RemoveEntry(mClientProxies.at(i)->mPlayerID);
+			findObjectWithID(mClientProxies.at(i)->mNetworkID)->SetDoesWantToDie(true);
+			mClientProxies.erase(mClientProxies.begin()+i);
+		}
+	}
 
 	PacketBuffer* outBuffer = new PacketBuffer();
 	sockaddr outAddr;
 	int retVal = mSocket->ReceiveFrom(outBuffer, outAddr);
 	if (retVal == SOCKET_ERROR) {
 		int error = GetLastError();
-		if (error != WSAEWOULDBLOCK) {
+		if (error != WSAEWOULDBLOCK && error != WSAECONNRESET) {
 			LOG(L"Error Receiving: %d", error);
 		}
 	}
@@ -115,9 +138,9 @@ void Server::DoFrame() {
 			}
 			else {
 				mPlayerCount++;
+				mObjectCount++;
 				msgStr.erase(0, 4);
-				OutputDebugStringA(msgStr.c_str());
-				mClientProxies.push_back(new ClientProxy(msgStr, mPlayerCount, outAddr));
+				mClientProxies.push_back(new ClientProxy(msgStr, mPlayerCount, mObjectCount, outAddr));
 
 				wlcm = std::to_string(mPlayerCount);
 
@@ -128,7 +151,6 @@ void Server::DoFrame() {
 				}
 				ScoreBoardManager::sInstance->AddEntry(mPlayerCount, playerName);
 
-				mObjectCount++;
 				ShipPtr playerShip = CreateShipForPlayer(mPlayerCount, mObjectCount);
 			}
 
@@ -145,6 +167,7 @@ void Server::DoFrame() {
 
 			ClientProxy* cp = GetExistingClientProxy(outAddr);
 			if (cp) {
+				cp->timeSinceUpdate = 0;
 				cp->mInputState.Read(outBuffer);
 			}
 

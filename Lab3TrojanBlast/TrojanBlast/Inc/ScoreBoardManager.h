@@ -21,6 +21,7 @@ public:
 		bool Read(PacketBuffer* inPacketBuffer);
 
 		void			SetScore( int32_t inScore );
+		void			SetUpdated(bool inUpdated);
 		bool			updated;
 
 	private:
@@ -37,7 +38,7 @@ public:
 	void	AddEntry( uint32_t inPlayerID, const wstring& inPlayerName );
 	void	IncScore( uint32_t inPlayerID, int inAmount );
 
-	const vector< Entry >&	GetEntries()	const	{ return mEntries; }
+	vector< Entry >&GetEntries()	{ return mEntries; }
 
 private:
 

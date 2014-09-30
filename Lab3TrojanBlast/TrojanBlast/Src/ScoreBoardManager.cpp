@@ -29,6 +29,11 @@ void ScoreBoardManager::Entry::SetScore( int32_t inScore )
 
 }
 
+void ScoreBoardManager::Entry::SetUpdated(bool inUpdated)
+{
+	updated = inUpdated;
+
+}
 
 ScoreBoardManager::Entry* ScoreBoardManager::GetEntry( uint32_t inPlayerID )
 {

@@ -21,8 +21,6 @@ Engine::Engine()
 
 int Engine::Run()
 {
-	//SetupWorld();
-
 	return DoRunLoop();
 }
 
