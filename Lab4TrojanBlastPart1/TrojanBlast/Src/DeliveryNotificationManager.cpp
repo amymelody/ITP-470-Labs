@@ -19,12 +19,14 @@ DeliveryNotificationManager::DeliveryNotificationManager( bool inShouldSendAcks,
 {
 }
 
-void DeliveryNotificationManager::LogStats( const wstring& inName )
+void DeliveryNotificationManager::LogStats(const wstring& inName)
 {
-	LOG(L"Client '%ls' Delivery rate %d%%, Drop rate %d%%",
-		inName.c_str(),
-		(100 * mDeliveredPacketCount) / mDispatchedPacketCount,
-		(100 * mDroppedPacketCount) / mDispatchedPacketCount);
+	if (mDispatchedPacketCount != 0) {
+		LOG(L"Client '%ls' Delivery rate %d%%, Drop rate %d%%",
+			inName.c_str(),
+			(100 * mDeliveredPacketCount) / mDispatchedPacketCount,
+			(100 * mDroppedPacketCount) / mDispatchedPacketCount);
+	}
 }
 
 
@@ -45,7 +47,18 @@ add it to the mInFlightPackets list and return it, so that in Part 2 you can sto
 */
 DeliveryNotificationManager::InFlightPacket* DeliveryNotificationManager::WriteSequenceNumber( MemoryOutputStream& inMemoryStream )
 {
-	++mDispatchedPacketCount;
+	inMemoryStream.WriteData(&mNextOutgoingSequenceNumber, sizeof(SequenceNumber));
+
+	if (mShouldProcessAcks) {
+		InFlightPacket* packet = new InFlightPacket(mNextOutgoingSequenceNumber++);
+		mInFlightPackets.push_front(*packet);
+		++mDispatchedPacketCount;
+		return packet;
+	}
+	else {
+		++mDispatchedPacketCount;
+		mNextOutgoingSequenceNumber++;
+	}
 
 	return nullptr;
 }
@@ -58,7 +71,12 @@ If you do, write the first AckRange in mPendingAcks and remove it from the list
 */
 void DeliveryNotificationManager::WriteAckData( MemoryOutputStream& inMemoryStream )
 {
-	
+	bool arePendingAcks = !mPendingAcks.empty();
+	inMemoryStream.WriteBits(&arePendingAcks, 1);
+	if (arePendingAcks) {
+		mPendingAcks.front().Write(inMemoryStream);
+		mPendingAcks.pop_front();
+	}
 }
 
 
@@ -74,26 +92,69 @@ Return true if the packet should be processed, or false if it should be ignored
 */
 bool DeliveryNotificationManager::ProcessSequenceNumber( MemoryInputStream& inMemoryStream )
 {
+	SequenceNumber seqNum;
+	inMemoryStream.ReadData(&seqNum, sizeof(SequenceNumber));
+
+	if (seqNum == mNextExpectedSequenceNumber) {
+		AddPendingAck(seqNum);
+		mNextExpectedSequenceNumber++;
+	}
+	else if (seqNum > mNextExpectedSequenceNumber) {
+		//nack skipped packets?
+		AddPendingAck(seqNum);
+		mNextExpectedSequenceNumber = seqNum + 1;
+	}
+	else {
+		return false;
+	}
+
 	return true;
 }
 
 
 /*
 lab4: check if the packet has acks in it.  if so, read the AckRange.  And respond appropriately.
-For our current strategy, let’s assume that if any inflight packet has a sequence number LESS than any ACK that comes in, then we consider the packet dropped.
+For our current strategy, let’s assume that if any inflight packet has a sequence number LESS
+than any ACK that comes in, then we consider the packet dropped.
 Call HandlePacketDeliveryFailure  to report a dropped packet.
 Make sure to clear out the inflightpackets  list of any packets you can.
 If a packet is successfully delivered, make sure to increment mDeliveredPacketCount.
 */
 void DeliveryNotificationManager::ProcessAcks( MemoryInputStream& inMemoryStream )
 {
-	
+	bool areAcks;
+	inMemoryStream.ReadBits(&areAcks, 1);
+	if (areAcks) {
+		AckRange ackRange;
+		ackRange.Read(inMemoryStream);
+		for (int i = mInFlightPackets.size() - 1; i >= 0; i--) {
+			if (mInFlightPackets.at(i).GetSequenceNumber() < ackRange.GetStart()) {
+				HandlePacketDeliveryFailure(mInFlightPackets.at(i));
+			}
+			else {
+				mDeliveredPacketCount++;
+			}
+			mInFlightPackets.erase(mInFlightPackets.begin() + i);
+		}
+	}
 }
 
 //lab4: run through the inflight packets and report any as dropped that aren't ack'd within kDelayBeforeAckTimeout
 void DeliveryNotificationManager::ProcessTimedOutPackets()
 {
-	
+	int droppedIndex = -1;
+	for (int i = mInFlightPackets.size() - 1; i >= 0; i--) {
+		if (Timing::sInstance.GetTimef() - mInFlightPackets.at(i).GetTimeDispatched() > kDelayBeforeAckTimeout) {
+			droppedIndex = i;
+			HandlePacketDeliveryFailure(mInFlightPackets.at(i));
+			mInFlightPackets.erase(mInFlightPackets.begin() + i);
+			break;
+		}
+	}
+	for (int i = droppedIndex - 1; i >= 0; i--) {
+		HandlePacketDeliveryFailure(mInFlightPackets.at(i));
+		mInFlightPackets.erase(mInFlightPackets.begin() + i);
+	}
 }
 
 void DeliveryNotificationManager::AddPendingAck( SequenceNumber inSequenceNumber )
@@ -120,10 +181,12 @@ but for now assume it is.  Also, we don't want to use too much space sending ack
 */
 void DeliveryNotificationManager::AckRange::Write( MemoryOutputStream& inMemoryStream ) const
 {
-
+	inMemoryStream.WriteData(&mStart, sizeof(SequenceNumber));
+	inMemoryStream.WriteBits(&mCount, 7);
 }
 
 void DeliveryNotificationManager::AckRange::Read( MemoryInputStream& inMemoryStream )
 {
-
+	inMemoryStream.ReadData(&mStart, sizeof(SequenceNumber));
+	inMemoryStream.ReadBits(&mCount, 7);
 }

@@ -192,10 +192,14 @@ int NetworkManagerServer::GetNewNetworkId()
 
 void NetworkManagerServer::HandleInputPacket( ClientProxyPtr inClientProxy, MemoryInputStream& inMemoryStream )
 {
-	InputState	inputState;
-	if( inputState.Read( inMemoryStream ) )
-	{
-		inClientProxy->SetInputState( inputState );
+	uint8_t isInput;
+	inMemoryStream.ReadBits(isInput, 1);
+	if (isInput) {
+		InputState	inputState;
+		if (inputState.Read(inMemoryStream))
+		{
+			inClientProxy->SetInputState(inputState);
+		}
 	}
 }
 

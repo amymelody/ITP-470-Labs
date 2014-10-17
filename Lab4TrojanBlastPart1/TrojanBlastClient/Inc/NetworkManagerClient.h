@@ -57,4 +57,6 @@ private:
 
 	IntToGameObjectMap	mNetworkIdToGameObjectMap;
 
+	InputState			mPreviousState;
+
 };

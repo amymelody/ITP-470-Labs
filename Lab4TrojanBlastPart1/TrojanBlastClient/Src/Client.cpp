@@ -37,7 +37,7 @@ Client::Client()
 
 	NetworkManagerClient::StaticInit( serverAddress, name );
 
-	//NetworkManagerClient::sInstance->SetDropPacketChance( 0.2f );
+	NetworkManagerClient::sInstance->SetDropPacketChance( 0.2f );
 }
 
 

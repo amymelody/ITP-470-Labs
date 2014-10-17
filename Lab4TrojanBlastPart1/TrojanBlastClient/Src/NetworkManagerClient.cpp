@@ -191,13 +191,24 @@ void NetworkManagerClient::UpdateSendingInputPacket()
 
 void NetworkManagerClient::SendInputPacket()
 {
-	MemoryOutputStream inputPacket; 
+	MemoryOutputStream inputPacket;
 
 	inputPacket.Write( kInputCC );
 
 	mDeliveryNotificationManager.WriteState( inputPacket );
 
-	InputManager::sInstance->GetState().Write( inputPacket );
+	const InputState& currentState = InputManager::sInstance->GetState();
+	if (currentState.GetDesiredHorizontalDelta() != mPreviousState.GetDesiredHorizontalDelta() ||
+		currentState.GetDesiredVerticalDelta() != mPreviousState.GetDesiredVerticalDelta()) {
+		bool isInput = true;
+		inputPacket.WriteBits(isInput, 1);
+		InputManager::sInstance->GetState().Write(inputPacket);
+		mPreviousState = currentState;
+	}
+	else {
+		bool isInput = false;
+		inputPacket.WriteBits(isInput, 1);
+	}
 
 	SendPacket( inputPacket, mServerAddress );
 }

@@ -15,6 +15,11 @@ void ShipServer::Update()
 	if( client )
 	{
 		const InputState& currentState = client->GetInputState();
+	//if (currentState.GetDesiredHorizontalDelta() != 0 ||
+	//	currentState.GetDesiredVerticalDelta() != 0) {
+	//	LOG(L"Right: %f", currentState.GetDesiredHorizontalDelta());
+	//	LOG(L"Forward: %f", currentState.GetDesiredVerticalDelta());
+	//}
 
 		ProcessInput( deltaTime, currentState );
 	}
