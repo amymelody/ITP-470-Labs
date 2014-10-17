@@ -100,7 +100,6 @@ bool DeliveryNotificationManager::ProcessSequenceNumber( MemoryInputStream& inMe
 		mNextExpectedSequenceNumber++;
 	}
 	else if (seqNum > mNextExpectedSequenceNumber) {
-		//nack skipped packets?
 		AddPendingAck(seqNum);
 		mNextExpectedSequenceNumber = seqNum + 1;
 	}
