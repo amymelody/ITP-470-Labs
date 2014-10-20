@@ -22,19 +22,29 @@ bool TommyCoin::HandleCollisionWithShip( Ship* inShip )
 
 uint32_t TommyCoin::Write( OutgoingPacketBuffer& inPacket, uint32_t inDirtyState ) const 
 {
-	//lab4 part 2...change this to only write the dirty state
+
 	uint32_t writtenState = 0;
 
 	uint32_t remainingBytes = inPacket.GetRemainingBytes();
 
 	if( remainingBytes >= 3 * sizeof( float ) + sizeof( XMVECTOR ) )
 	{
-		XMVECTORF32 location; location.v = GetLocation();
-		inPacket.Write( location.f[ 0 ] );
-		inPacket.Write( location.f[ 1 ] );
+		bool poseDirty = inDirtyState & ETCRS_Pose;
+		bool colorDirty = inDirtyState & ETCRS_Color;
 
-		inPacket.Write( GetRotation() );
-		inPacket.Write( GetColor() );
+		inPacket.Write(poseDirty);
+		if (poseDirty) {
+			XMVECTORF32 location; location.v = GetLocation();
+			inPacket.Write(location.f[0]);
+			inPacket.Write(location.f[1]);
+
+			inPacket.Write(GetRotation());
+		}
+
+		inPacket.Write(colorDirty);
+		if (colorDirty) {
+			inPacket.Write(GetColor());
+		}
 
 		writtenState |= inDirtyState;
 	}
@@ -44,18 +54,28 @@ uint32_t TommyCoin::Write( OutgoingPacketBuffer& inPacket, uint32_t inDirtyState
 
 void TommyCoin::Read( IncomingPacketBuffer& inPacket )
 {
-	//lab4 part 2...change this to match the new Write
-	XMVECTORF32 location = { 0 };
-	inPacket.Read( location.f[ 0 ] );
-	inPacket.Read( location.f[ 1 ] );
-	SetLocation( location );
 
-	float rotation;
-	inPacket.Read( rotation );
-	SetRotation( rotation );
+	bool poseDirty;
+	bool colorDirty;
+	
+	inPacket.Read(poseDirty);
+	if (poseDirty) {
+		XMVECTORF32 location = { 0 };
+		inPacket.Read(location.f[0]);
+		inPacket.Read(location.f[1]);
+		SetLocation(location);
 
-	XMVECTOR color;
-	inPacket.Read( color );
-	SetColor( color );
+		float rotation;
+		inPacket.Read(rotation);
+		SetRotation(rotation);
+	}
+
+	inPacket.Read(colorDirty);
+	if (colorDirty) {
+		XMVECTOR color;
+		inPacket.Read(color);
+		SetColor(color);
+	}
+
 }
 

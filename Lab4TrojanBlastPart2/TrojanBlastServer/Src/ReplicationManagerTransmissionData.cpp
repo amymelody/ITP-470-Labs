@@ -1,4 +1,5 @@
 #include <TrojanBlastServerPCH.h>
+#include <memory>
 
 void ReplicationManagerTransmissionData::AddTransmission( int inNetworkId, EReplicatedObjectAction inAction, uint32_t inState )
 {
@@ -58,24 +59,34 @@ void ReplicationManagerTransmissionData::HandleDeliverySuccess( DeliveryNotifica
 
 void ReplicationManagerTransmissionData::HandleCreateDeliveryFailure( int inNetworkId ) const
 {
-	//lab4 part 2
-
-	//does the object still exist? it might be dead, in which case we don't resend a create
-	//otherwise, replicate the create again!
+	GameObjectPtr obj = NetworkManagerServer::sInstance->GetGameObject(inNetworkId);
+	if (obj.get()) {
+		mReplicationManagerServer->ReplicateCreate(inNetworkId, obj->GetAllStateMask());
+	}
 }
 
 void ReplicationManagerTransmissionData::HandleDestroyDeliveryFailure( int inNetworkId ) const
 {
-	//lab 4 part 2
-	
-	//replicate the destroy again!
+	mReplicationManagerServer->ReplicateDestroy(inNetworkId);
 }
 
 void ReplicationManagerTransmissionData::HandleUpdateStateDeliveryFailure( int inNetworkId, uint32_t inState, DeliveryNotificationManager* inDeliveryNotificationManager ) const
 {
-	//lab 4 part 2
-	//does the object still exist? it might be dead, in which case we don't resend an update
-	//if it's still alive,
+	GameObjectPtr obj = NetworkManagerServer::sInstance->GetGameObject(inNetworkId);
+	if (obj.get()) {
+		for (DeliveryNotificationManager::InFlightPacket packet : inDeliveryNotificationManager->GetInFlightPackets()) {
+			ReplicationManagerTransmissionDataPtr tData = std::dynamic_pointer_cast<ReplicationManagerTransmissionData>(packet.GetReplicationTransmissionData());
+			if (tData) {
+				for (ReplicationTransmission t : tData->mTransmissions) {
+					if (t.GetNetworkId() == inNetworkId) {
+						inState -= t.GetState();
+					}
+				}
+			}
+		}
+		mReplicationManagerServer->SetStateDirty(inNetworkId, inState);
+	}
+	
 	//get the inflight packet list from the DeliveryNotificaitonManager, 
 	//run through the inflight packets  to see if any contain updates for this network object, 
 	//and if so, remove the state bits that are updated in them from the state bits that you need to resend. 

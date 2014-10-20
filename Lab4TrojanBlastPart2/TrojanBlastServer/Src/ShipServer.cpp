@@ -10,6 +10,10 @@ void ShipServer::HandleDying()
 
 void ShipServer::Update()
 {
+	XMVECTORF32 location; 
+	location.v = GetLocation();
+	float rotation = GetRotation();
+
 	Ship::Update();
 	
 	float deltaTime = Timing::sInstance.GetDeltaTime();
@@ -24,5 +28,14 @@ void ShipServer::Update()
 
 	SimulateMovement( deltaTime );
 
-	
+	XMVECTORF32 newLocation;
+	newLocation.v = GetLocation();
+	if (location.f[0] != newLocation.f[0] ||
+		location.f[1] != newLocation.f[1]) {
+		NetworkManagerServer::sInstance->SetStateDirty(GetNetworkId(), ESRS_Location);
+	}
+
+	if (rotation != GetRotation()) {
+		NetworkManagerServer::sInstance->SetStateDirty(GetNetworkId(), ESRS_Rotation);
+	}
 }

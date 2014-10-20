@@ -29,20 +29,32 @@ void ReplicationManagerClient::Read( IncomingPacketBuffer& inPacket )
 
 void ReplicationManagerClient::ReadAndDoCreateAction( IncomingPacketBuffer& inPacket, int inNetworkId )
 {
-	//lab4 part2
+	uint32_t fourCCName;
+	inPacket.Read(fourCCName);
+
+	GameObjectPtr obj = NetworkManagerClient::sInstance->GetGameObject(inNetworkId);
+	if (!obj.get()) {
+		obj = GameObjectRegistry::sInstance->CreateGameObject(fourCCName);
+		obj->SetNetworkId(inNetworkId);
+		NetworkManagerClient::sInstance->AddToNetworkIdToGameObjectMap(obj);
+	}
+
+	obj->Read(inPacket);
 }
 
 void ReplicationManagerClient::ReadAndDoUpdateAction( IncomingPacketBuffer& inPacket, int inNetworkId )
 {
-	//lab4 part2
-	
+	GameObjectPtr obj = NetworkManagerClient::sInstance->GetGameObject(inNetworkId);
+	if (obj.get()) {
+		obj->Read(inPacket);
+	}
 }
 
 void ReplicationManagerClient::ReadAndDoDestroyAction( IncomingPacketBuffer& inPacket, int inNetworkId )
 {
-	//lab4 part2
-
-	//if something was destroyed before the create went through, we'll never get it
-	//but we might get the destroy request, so be tolerant of being asked to destroy something that wasn't created
-	
+	GameObjectPtr obj = NetworkManagerClient::sInstance->GetGameObject(inNetworkId);
+	if (obj.get()) {
+		obj->SetDoesWantToDie(true);
+		NetworkManagerClient::sInstance->RemoveFromNetworkIdToGameObjectMap(obj);
+	}
 }

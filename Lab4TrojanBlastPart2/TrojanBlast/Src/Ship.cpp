@@ -174,7 +174,6 @@ void Ship::ProcessCollisionsWithScreenWalls()
 
 uint32_t Ship::Write( OutgoingPacketBuffer& inPacket, uint32_t inDirtyState ) const
 {
-	//lab4 part 2...change this to only write the dirty state
 
 	uint32_t writtenState = 0;
 
@@ -182,15 +181,34 @@ uint32_t Ship::Write( OutgoingPacketBuffer& inPacket, uint32_t inDirtyState ) co
 
 	if( remainingBytes >= 3 * sizeof( float ) + sizeof( float ) + sizeof( XMVECTOR ) + sizeof( uint32_t ) + sizeof( uint8_t ) )
 	{
-		XMVECTORF32 location; location.v = GetLocation();
-		inPacket.Write( location.f[ 0 ] );
-		inPacket.Write( location.f[ 1 ] );
+		bool locationDirty = inDirtyState & ESRS_Location;
+		bool rotationDirty = inDirtyState & ESRS_Rotation;
+		bool colorDirty = inDirtyState & ESRS_Color;
+		bool playerIdDirty = inDirtyState & ESRS_PlayerId;
 
+		inPacket.Write(locationDirty);
+		if (locationDirty) {
+			XMVECTORF32 location; location.v = GetLocation();
+			inPacket.Write(location.f[0]);
+			inPacket.Write(location.f[1]);
+		}
+		
 		inPacket.Write( mIsThrusting );
 
-		inPacket.Write( GetRotation() );
-		inPacket.Write( GetColor() );
-		inPacket.Write( GetPlayerId() );
+		inPacket.Write(rotationDirty);
+		if (rotationDirty) {
+			inPacket.Write(GetRotation());
+		}
+
+		inPacket.Write(colorDirty);
+		if (colorDirty) {
+			inPacket.Write(GetColor());
+		}
+
+		inPacket.Write(playerIdDirty);
+		if (playerIdDirty) {
+			inPacket.Write(GetPlayerId());
+		}
 
 		writtenState |= inDirtyState;
 	}
@@ -202,21 +220,39 @@ uint32_t Ship::Write( OutgoingPacketBuffer& inPacket, uint32_t inDirtyState ) co
 
 void Ship::Read( IncomingPacketBuffer& inPacket )
 {
-	//lab4 part 2...change this to match the new Write
-	XMVECTORF32 location = { 0 };
-	inPacket.Read( location.f[ 0 ] );
-	inPacket.Read( location.f[ 1 ] );
-	SetLocation( location );
 
-	inPacket.Read( mIsThrusting );
+	bool locationDirty;
+	bool rotationDirty;
+	bool colorDirty;
+	bool playerIdDirty;
 
-	float rotation;
-	inPacket.Read( rotation );
-	SetRotation( rotation );
+	inPacket.Read(locationDirty);
+	if (locationDirty) {
+		XMVECTORF32 location = { 0 };
+		inPacket.Read(location.f[0]);
+		inPacket.Read(location.f[1]);
+		SetLocation(location);
+	}
 
-	XMVECTOR color;
-	inPacket.Read( color );
-	SetColor( color );
+	inPacket.Read(mIsThrusting);
 
-	inPacket.Read( mPlayerId );
+	inPacket.Read(rotationDirty);
+	if (rotationDirty) {
+		float rotation;
+		inPacket.Read(rotation);
+		SetRotation(rotation);
+	}
+
+	inPacket.Read(colorDirty);
+	if (colorDirty) {
+		XMVECTOR color;
+		inPacket.Read(color);
+		SetColor(color);
+	}
+
+	inPacket.Read(playerIdDirty);
+	if (playerIdDirty) {
+		inPacket.Read(mPlayerId);
+	}
+	
 }

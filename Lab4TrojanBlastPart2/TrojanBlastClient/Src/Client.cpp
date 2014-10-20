@@ -36,8 +36,7 @@ Client::Client()
 
 	NetworkManagerClient::StaticInit( serverAddress, name );
 
-	//lab4 part2- uncomment for test!
-	//NetworkManagerClient::sInstance->SetDropPacketChance( 0.6f );
+	NetworkManagerClient::sInstance->SetDropPacketChance( 0.6f );
 }
 
 
